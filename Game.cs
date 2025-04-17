@@ -296,13 +296,23 @@ namespace DungeonExplorer
         public void Start() {
 
             // This text is printed at the beginning of the game. The program asks the player for their name:
-            PrintDelay("Before you embark on the journey of a lifetime, I must know your name.", 1);
+            PrintDelay("Before you embark on the journey of a lifetime, please tell me your name: ", 1);
             string userName = Console.ReadLine();
+            // Debug.Assert is used to see if the player's name is more than 0 characters. If it is, an error message will be displayed to the player and the game will restart from the beginning again:
+            Test.TestForPlayerNameLength(userName);
+            if (userName.Length == 0)
+            {
+                Start();
+                return;
+            }
             player.Name = userName;
             Console.Clear();
+            // The player has chosen their name. The game has started and the introduction begins to play:
             PrintDelay($"{userName} began their epic adventure through the deep dungeons...\n\n", 1);
-            PrintDelay($"Commands\n\"attack\" to use your weapon\n\"heal\" to increase your HP\n\"N\", \"S\", \"E\", \"W\" to navigate through rooms\n\"inv\" to view your inventory\n\"pick\" to collect items\n\"use\" to use items", 1);
+            // A list of player commands is displayed to the user to show them their available options throughout the game's duration:
+            PrintDelay($"Commands:\n\"attack\" to use your weapon\n\"heal\" to increase your HP\n\"N\", \"S\", \"E\", \"W\" to navigate through rooms\n\"inv\" to view your inventory\n\"pick\" to collect items\n\"use\" to use items", 1);
             Console.ForegroundColor = ConsoleColor.DarkYellow;
+            // The user can type anything, or leave the space empty. They must press enter to begin the game. This is so the game does not begin automatically and allows the user a moment of time to understand the player commands:
             PrintDelay("\nType anything and click ENTER to begin.", 1);
             Console.ReadLine();
             Console.ForegroundColor = ConsoleColor.White;
@@ -310,7 +320,7 @@ namespace DungeonExplorer
             
             bool GameInProgress = true;
             while (GameInProgress) {
-                // wall crushing event check
+                // Wall crushing event check
                 if (player.CurrentRoom.Name == "Crushing walls Corridor" && !player.CurrentRoom.EventTriggered) {
                     HandleWallEvent(player.CurrentRoom);
                 }

@@ -5,6 +5,8 @@ using System.Net.Http.Headers;
 
 namespace DungeonExplorer
 {
+
+    // Monster inherits from Creature as it is a Derived Class. This means every monster will take the attributes from creature:
     public class Monster : Creature {
         public Room CurrentRoom { get; set; }
         public int AttackDmg { get; set; }

@@ -17,6 +17,10 @@ namespace DungeonExplorer
         {
             Debug.Assert(value >= 0, "Error: Value wasn't a positive integer or 0");
         }
+        public static void TestForPlayerNameLength(string value)
+        {
+            Debug.Assert(value.Length > 0, "Error: Player name must be at least one character in length");
+        }
 
     }
 }
