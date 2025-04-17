@@ -121,6 +121,7 @@ namespace DungeonExplorer
                 new Goblin(),
                 new Vampire(),
                 new Skeleton(),
+              //new Mimic(),
 
             };
 
@@ -267,7 +268,7 @@ namespace DungeonExplorer
         }
         
         private void handleMimicEvent(Room room) {
-            Console.WriteLine("Test/Placholder. TO DO!");
+            Console.WriteLine("Test/Placholder. TO DO!"); /////////////NEEEEEEEEEEEEEEEEEEEEDS WORK
         }
 
         private void handleKeyEvent(Room room) {
