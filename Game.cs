@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Net.NetworkInformation;
 
 /* IDEAS:
 
@@ -225,7 +226,7 @@ namespace DungeonExplorer
             Console.WriteLine("Quick! You must disable the mechanism forcing the walls to close in on you!");
             Console.WriteLine("Type the alphabet as fast as you can to survive!");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("Press ENTER to start quicktime event.");
+            Console.Write("Press ENTER to start the quicktime event.");
             Console.ForegroundColor = ConsoleColor.White;
             Console.ReadLine();
             Console.Clear();
@@ -259,7 +260,7 @@ namespace DungeonExplorer
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.Clear();
                 // This string is printed if the player fails the quicktime event:
-                Console.WriteLine("The walls crush you...");
+                Console.WriteLine("The walls close in and the brave adventurer is crushed...");
                 Console.WriteLine($"\n\n {player.Name} was slain!");
                 Thread.Sleep(5000);
                 Console.ReadLine();
