@@ -122,7 +122,7 @@ namespace DungeonExplorer
                 new Goblin(),
                 new Vampire(),
                 new Skeleton(),
-              //new Mimic(),
+                new Mimic(),
 
             };
 
@@ -264,8 +264,8 @@ namespace DungeonExplorer
                 Console.WriteLine($"\n\n {player.Name} was slain!");
                 Thread.Sleep(5000);
                 Console.ReadLine();
-                Environment.Exit(0);
-            }
+                Console.WriteLine(Statistics.GameOverStats());
+                Environment.Exit(0);            }
         }
         
         private void handleMimicEvent(Room room) {
@@ -358,6 +358,7 @@ namespace DungeonExplorer
                     var exits = player.CurrentRoom.GetExits();
                     if (exits.ContainsKey(input.ToUpper())) {
                         player.CurrentRoom = exits[input.ToUpper()];
+                        Statistics.RoomsExplored();
                         Console.Clear();
                         continue;
                     }
@@ -390,9 +391,12 @@ namespace DungeonExplorer
                     } else if (choice == "potions") {
                         Console.WriteLine("=================================");
                         Console.WriteLine("Potions in Inventory: ");
-                        if (potions.Count == 0) {
-                            Console.WriteLine("None.");
-                        } else {
+                        if (potions == null || potions.Count == 0)
+                        {
+                            Console.WriteLine("None.\n");
+                        }
+                        else
+                        {
                             foreach (var potion in potions) {
                                 //Console.WriteLine($"- {potion.Name}: {potion.HealingFactor} HP");
                                 Console.WriteLine($"- {potion.GetSummary()}");

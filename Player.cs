@@ -18,42 +18,70 @@ namespace DungeonExplorer
             Inventory = new List<Item>();
         }
 
-        public void AddWeapon(Weapon weapon) {
+        public void AddWeapon(Weapon weapon)
+        {
             Inventory.Add(weapon);
         }
 
-        public void AddPotion(Potion potion) {
+        public void AddPotion(Potion potion)
+        {
             Inventory.Add(potion);
         }
-        public void AddMisc(Misc misc) {
+        public void AddMisc(Misc misc)
+        {
             Inventory.Add(misc);
         }
 
-        public List<Item> GetInventory() {
+        public List<Item> GetInventory()
+        {
             return Inventory;
         }
 
-        public void SetInventory(List<Item> inventory) {
+        public void SetInventory(List<Item> inventory)
+        {
             Inventory = inventory;
         }
 
-        public List<Weapon> GetWeapons() {
-            return Inventory.OfType<Weapon>().ToList();
+        public List<Weapon> GetWeapons()
+        {
+            //Checks if the player has any weapons:
+            var NumberedWeapons = Inventory.OfType<Weapon>().Select(weapon => weapon).ToList();
+            var WeaponsSorted = from Weapon weapon in NumberedWeapons orderby weapon.AttackDmg descending select weapon;
+            List<Weapon> WeaponsSortedList = WeaponsSorted.ToList();
+            if (WeaponsSortedList.Count == 0)
+            {
+                Console.WriteLine("Apart from your trusty fists, you are currently carrying no weapons.");
+                return null;
+            }
+            return WeaponsSortedList;
         }
 
-        public List<Potion> GetPotions() {
-            return Inventory.OfType<Potion>().ToList();
+        public List<Potion> GetPotions()
+        {
+            // Checks if the player has any potions:
+            var potions = Inventory.OfType<Potion>().Select(Potion => Potion).ToList();
+            var PotionsSorted = from Potion potion in potions orderby potion.HealingFactor descending select potion;
+            List<Potion> PotionsList = PotionsSorted.ToList();
+            if (PotionsList.Count == 0)
+            {
+                Console.WriteLine("You currently have no potions in your inventory.");
+                return null;
+            }
+            return PotionsList;
         }
         
-        public List<Misc> GetMiscs() {
+        public List<Misc> GetMiscs()
+        {
             return Inventory.OfType<Misc>().ToList();
         }
 
-        public void drinkPotion(Potion potion) {
+        public void drinkPotion(Potion potion)
+        {
             Health += potion.HealingFactor;
         }
 
-        public void useMisc(Misc misc) {
+        public void useMisc(Misc misc)
+        {
             Inventory.Remove(misc);
         }
 
@@ -97,6 +125,7 @@ namespace DungeonExplorer
                 if (monster.GoesFirst) {
                     Console.WriteLine($"{monster.Name} attacks {player.Name} for {monster.AttackDmg} DMG.");
                     player.TakeDamage(monster.AttackDmg);
+                    Statistics.TakenDamage(monster.AttackDmg);
 
                     if (!player.IsAlive()) {
                         Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -105,6 +134,7 @@ namespace DungeonExplorer
                         Console.ForegroundColor = ConsoleColor.White;
                         Thread.Sleep(2000);
                         Console.ReadLine();
+                        Console.WriteLine(Statistics.GameOverStats());
                         Environment.Exit(0);
                     }
 
@@ -117,6 +147,7 @@ namespace DungeonExplorer
                     }
                     Console.WriteLine($"{player.Name} attacks {monster.Name} for {playerDmg} DMG.");
                     monster.TakeDamage(playerDmg);
+                    Statistics.DoneDamage(playerDmg);
 
                     if (!monster.IsAlive()) {
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -133,6 +164,7 @@ namespace DungeonExplorer
                     }
                     Console.WriteLine($"{player.Name} attacks {monster.Name} for {playerDmg} DMG.");
                     monster.TakeDamage(playerDmg);
+                    Statistics.DoneDamage(playerDmg);
 
                     if (!monster.IsAlive()) {
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -146,6 +178,7 @@ namespace DungeonExplorer
 
                     Console.WriteLine($"{monster.Name} attacks {player.Name} for {monster.AttackDmg} DMG.");
                     player.TakeDamage(monster.AttackDmg);
+                    Statistics.TakenDamage(monster.AttackDmg);
 
                     if (!player.IsAlive()) {
                         Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -154,7 +187,9 @@ namespace DungeonExplorer
                         Console.ForegroundColor = ConsoleColor.White;
                         Thread.Sleep(2000);
                         Console.ReadLine();
+                        Console.WriteLine(Statistics.GameOverStats());
                         Environment.Exit(0);
+
                     }
                 }
 
