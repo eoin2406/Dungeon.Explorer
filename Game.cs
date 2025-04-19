@@ -135,7 +135,7 @@ namespace DungeonExplorer
             Weapon sword = new Weapon("Broadsword", "A plain broadsword", 12);
             Weapon club = new Weapon("Club", "An old club", 17);
             Weapon stick = new Weapon("Stick", "Just a stick", 1);
-            Weapon bow = new Weapon("Bow", "A bow", 24);
+            Weapon bow = new Weapon("Bow", "A sturdy longbow", 24);
             Weapon longsword = new Weapon("Longsword", "A mighty longsword", 25);
 
             Potion small = new Potion("Lesser Healing", "Heals 5 HP", 5);
@@ -171,7 +171,7 @@ namespace DungeonExplorer
                 if (monster != null) {
                     string monsterName = monster.Name;
                     if(!string.IsNullOrEmpty(monsterName)) {
-                        Console.WriteLine($"The {monsterName} shrieks.");
+                        Console.WriteLine(monster.GetMonsterNoise());
                     } else {
                         Console.WriteLine("DEBUG: MonsterName empty.");
                     }
@@ -380,7 +380,8 @@ namespace DungeonExplorer
                             Console.WriteLine("None.");
                         } else {
                             foreach (var weapon in weapons){
-                                Console.WriteLine($"- {weapon.Name}: {weapon.AttackDmg} DMG");
+                                //Console.WriteLine($"- {weapon.Name}: {weapon.AttackDmg} DMG");
+                                Console.WriteLine($"- {weapon.GetSummary()}");
                             }
                             Console.Write("\n");
                         }
@@ -392,7 +393,8 @@ namespace DungeonExplorer
                             Console.WriteLine("None.");
                         } else {
                             foreach (var potion in potions) {
-                                Console.WriteLine($"- {potion.Name}: {potion.HealingFactor} HP");
+                                //Console.WriteLine($"- {potion.Name}: {potion.HealingFactor} HP");
+                                Console.WriteLine($"- {potion.GetSummary()}");
                             }
                             Console.Write("\n");
                         }
