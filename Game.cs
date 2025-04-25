@@ -34,7 +34,8 @@ namespace DungeonExplorer
         private Player player;
         private Room bossRoom;
         private Room ruins;
-        public Game() {
+        public Game()
+        {
             Rooms = new List<Room>();
             player = new Player("Name", 100);
             InitialiseRooms();
@@ -42,15 +43,18 @@ namespace DungeonExplorer
 
         }
 
-        private void PrintDelay(string text, int delay) {
-            foreach (char c in text) {
+        private void PrintDelay(string text, int delay)
+        {
+            foreach (char c in text)
+            {
                 Console.Write(c);
                 Thread.Sleep(delay);
             }
             Console.Write("\n");
         }
 
-        List<string> Suffixes = new List<string> {
+        List<string> Suffixes = new List<string>
+        {
             " is neatly placed in the corner.",
             " lies at your feet.",
             "! Could be useful.",
@@ -63,7 +67,8 @@ namespace DungeonExplorer
             " looks as if it was left behind."
         };
 
-        private void InitialiseRooms(){
+        private void InitialiseRooms()
+        {
             // Room names and their descriptions. Each room has an individual, unique description:
             Room cave = new Room("Cave Mouth", "You make your way down through the uneven ground, with a chill down your spine.");
             Room hall = new Room("Hall", "The hall is faintly lit, only by candlelight. You picture how lively this place must have been at some point.");
@@ -116,7 +121,8 @@ namespace DungeonExplorer
             bossRoom.AddMonster(new Minotaur());
 
             // Randomly assign a room to each monster:
-            List<Monster> monsters = new List<Monster> {
+            List<Monster> monsters = new List<Monster>
+            {
                 new Dragon(),
                 new Orc(),
                 new Goblin(),
@@ -127,7 +133,8 @@ namespace DungeonExplorer
             };
 
             Random random = new Random();
-            foreach (var monster in monsters) {
+            foreach (var monster in monsters)
+            {
                 int roomNum = random.Next(Rooms.Count);
                 Rooms[roomNum].AddMonster(monster);
             }
@@ -143,17 +150,21 @@ namespace DungeonExplorer
             Potion medium = new Potion("Medium Healing", "Heals 10 HP", 10);
             Potion large = new Potion("Greater Healing", "Heals 20 HP", 20);
 
-            cave.SetItems(new List<Item> {
+            cave.SetItems(new List<Item>
+            {
                 stick,
                 small,
             });
-            chamber.SetItems(new List<Item> {
+            chamber.SetItems(new List<Item>
+            {
                 club,
             });
-            ruins.SetItems(new List<Item> {
+            ruins.SetItems(new List<Item>
+            {
                 sword,
             });
-            cellar.SetItems(new List<Item> {
+            cellar.SetItems(new List<Item>
+            {
                 bow,
                 medium
             });
@@ -163,57 +174,72 @@ namespace DungeonExplorer
             Weapon fists = new Weapon("Fists", "Your fists", 1);
             player.AddWeapon(fists);
         }
-
-        private void PrintMonsters(List<Monster> monsters) {
-            if (monsters == null || monsters.Count == 0) {
+        private void PrintMonsters(List<Monster> monsters)
+        {
+            if (monsters == null || monsters.Count == 0)
+            {
                 return;
             }
-            foreach (var monster in monsters) {
-                if (monster != null) {
+            foreach (var monster in monsters)
+            {
+                if (monster != null)
+                {
                     string monsterName = monster.Name;
-                    if(!string.IsNullOrEmpty(monsterName)) {
+                    if(!string.IsNullOrEmpty(monsterName))
+                    {
                         Console.WriteLine(monster.GetMonsterNoise());
-                    } else {
+                    }
+                    else
+                    {
                         Console.WriteLine("DEBUG: MonsterName empty.");
                     }
                 }
             }
         }
 
-        private void PrintWeapons(List<Weapon> weapons) {
-            if (weapons == null || weapons.Count == 0) {
+        private void PrintWeapons(List<Weapon> weapons)
+        {
+            if (weapons == null || weapons.Count == 0)
+            {
                 return;
             }
             Random random = new Random();
 
-            foreach (var weapon in weapons) {
+            foreach (var weapon in weapons)
+            {
                 string randomSuffix = Suffixes[random.Next(Suffixes.Count)];
                 Console.WriteLine($"A {weapon.Name}{randomSuffix}");
             }
         }
         
-        private void PrintPotions(List<Potion> potions) {
-            if (potions == null || potions.Count == 0) {
+        private void PrintPotions(List<Potion> potions)
+        {
+            if (potions == null || potions.Count == 0)
+            {
                 return;
             }
-
-
-            foreach (var potion in potions) {
+            foreach (var potion in potions)
+            {
                 Console.WriteLine($"You can see a potion of {potion.Name}.");
             }
         }
 
-        private void PrintExits(Dictionary<string, Room> exits) {
+        private void PrintExits(Dictionary<string, Room> exits)
+        {
             Console.Write("Exits are visible ");
 
             var keys = exits.Keys.ToList();
             
-            if (exits.Count == 1) {
+            if (exits.Count == 1)
+            {
                 Console.WriteLine($"to the {keys[0]}");
             } else if (exits.Count == 2) {
                 Console.WriteLine($"to the {keys[0]} and {keys[1]}");
-            } else {
-                for (var i = 0; i < keys.Count - 1; i++) {
+            }
+            else
+            {
+                for (var i = 0; i < keys.Count - 1; i++)
+                {
                     Console.Write($"to the {keys[i]}, ");
                 }
                 Console.Write($"and {keys[keys.Count - 1]}\n");
@@ -242,18 +268,19 @@ namespace DungeonExplorer
                     {string quicktimeInput = Console.ReadLine()?.Trim();
 
                     if (quicktimeInput == "abcdefghijklmnopqrstuvwxyz")
-                    {
-                        isTimeUp = true;
-                        Console.Clear();
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        // This string is printed if the player completes the quicktime event:
-                        Console.WriteLine("The walls come to a screeching halt. You did it!");
-                        Thread.Sleep(5000);
-                        Console.ForegroundColor = ConsoleColor.White;
-                        room.EventTriggered = true;
-                        break;
-                    }}
+                {
+                    isTimeUp = true;
+                    Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    // This string is printed if the player completes the quicktime event:
+                    Console.WriteLine("The walls come to a screeching halt. You did it!");
+                    Thread.Sleep(5000);
+                    Console.ForegroundColor = ConsoleColor.White;
+                    room.EventTriggered = true;
+                    break;
+                }
             }
+        }
 
             if (!isTimeUp)
             {
@@ -265,14 +292,17 @@ namespace DungeonExplorer
                 Thread.Sleep(5000);
                 Console.ReadLine();
                 Console.WriteLine(Statistics.GameOverStats());
-                Environment.Exit(0);            }
+                Environment.Exit(0);
+            }
         }
         
-        private void handleMimicEvent(Room room) {
+        private void handleMimicEvent(Room room)
+        {
             Console.WriteLine("Test/Placholder. TO DO!"); /////////////NEEEEEEEEEEEEEEEEEEEEDS WORK
         }
 
-        private void handleKeyEvent(Room room) {
+        private void handleKeyEvent(Room room)
+        {
             bossRoom.EventTriggered = true;
             player.SetCurrentRoom(bossRoom);
             Console.Clear();
@@ -291,11 +321,11 @@ namespace DungeonExplorer
             var monsters = player.CurrentRoom.Monsters;
 
             player.Combat(monsters, player);
-
         }
 
 
-        public void Start() {
+        public void Start()
+        {
 
             // This text is printed at the beginning of the game. The program asks the player for their name:
             PrintDelay("Before you embark on the journey of a lifetime, please tell me your name: ", 1);
@@ -321,17 +351,20 @@ namespace DungeonExplorer
             Console.Clear();
             
             bool GameInProgress = true;
-            while (GameInProgress) {
+            while (GameInProgress)
+            {
                 // Wall crushing event check
-                if (player.CurrentRoom.Name == "Crushing walls Corridor" && !player.CurrentRoom.EventTriggered) {
+                if (player.CurrentRoom.Name == "Crushing walls Corridor" && !player.CurrentRoom.EventTriggered)
+                {
                     HandleWallEvent(player.CurrentRoom);
                 }
 
-                if (player.CurrentRoom.Name == "Treasury" && !player.CurrentRoom.EventTriggered) {
+                if (player.CurrentRoom.Name == "Treasury" && !player.CurrentRoom.EventTriggered)
+                {
                     handleMimicEvent(player.CurrentRoom);
                 }
-
-                if (player.CurrentRoom.Name == "Hidden Lair" && bossRoom.EventTriggered == false) {
+                if (player.CurrentRoom.Name == "Hidden Lair" && bossRoom.EventTriggered == false)
+                {
                     PrintDelay($"{player.Name} attempts to force the door open, to no avail.", 1);
                     PrintDelay("There must be some other way to get through.", 1);
                     Console.Clear();
@@ -354,41 +387,56 @@ namespace DungeonExplorer
                 string input = ExplorerInput();
 
                 // Corresponding action to decision. This for navigating the rooms in directions:
-                if (input == "n" || input == "s" || input == "w" || input == "e") {
+                if (input == "n" || input == "s" || input == "w" || input == "e")
+                {
                     var exits = player.CurrentRoom.GetExits();
-                    if (exits.ContainsKey(input.ToUpper())) {
+                    if (exits.ContainsKey(input.ToUpper()))
+                    {
                         player.CurrentRoom = exits[input.ToUpper()];
                         Statistics.RoomsExplored();
                         Console.Clear();
                         continue;
                     }
-                } else if (input == "attack") {
-                    if (monsters.Count == 0) {
+                }
+                else if (input == "attack")
+                {
+                    if (monsters.Count == 0)
+                    {
                      // If there are no monsters in a room, the player is unable to attack, and this string is printed:
                         PrintDelay("You can't attack; there are no monsters here.", 1);
-                    } else {
+                    }
+                    else
+                    {
                         player.Combat(monsters, player);
                     }
-                } else if (input == "inv") {
+                }
+                else if (input == "inv")
+                {
                     var weapons = player.GetWeapons();
                     var potions = player.GetPotions();
                     var miscs = player.GetMiscs();
                     Console.WriteLine("Type \"weapons\" to view your weapons, \"potions\" to view your potions, or \"misc\" to view miscellaneous items:");
                     string choice = Console.ReadLine();
-                    if (choice == "weapons") { 
+                    if (choice == "weapons")
+                    { 
                         Console.WriteLine("=================================");
                         Console.WriteLine("Weapons in Inventory: ");
-                        if (weapons.Count == 0) {
+                        if (weapons.Count == 0)
+                        {
                             Console.WriteLine("None.");
-                        } else {
-                            foreach (var weapon in weapons){
+                        }
+                        else
+                        {
+                            foreach (var weapon in weapons)
+                            {
                                 //Console.WriteLine($"- {weapon.Name}: {weapon.AttackDmg} DMG");
                                 Console.WriteLine($"- {weapon.GetSummary()}");
                             }
                             Console.Write("\n");
                         }
-
-                    } else if (choice == "potions") {
+                    }
+                    else if (choice == "potions")
+                    {
                         Console.WriteLine("=================================");
                         Console.WriteLine("Potions in Inventory: ");
                         if (potions == null || potions.Count == 0)
@@ -397,58 +445,78 @@ namespace DungeonExplorer
                         }
                         else
                         {
-                            foreach (var potion in potions) {
+                            foreach (var potion in potions)
+                            {
                                 //Console.WriteLine($"- {potion.Name}: {potion.HealingFactor} HP");
                                 Console.WriteLine($"- {potion.GetSummary()}");
                             }
                             Console.Write("\n");
                         }
-                    } else if (choice == "misc") {
+                    }
+                    else if (choice == "misc")
+                    {
                         Console.WriteLine("=================================");
                         Console.WriteLine("Items in Inventory: ");
-                        if (miscs.Count == 0) {
+                        if (miscs.Count == 0)
+                        {
                             Console.WriteLine("None.");
-                        } else {
-                            foreach (var misc in miscs) {
-                                Console.WriteLine($"- {misc.Name}");
+                        }
+                        else
+                        {
+                            foreach (var misc in miscs)
+                            {
+                             Console.WriteLine($"- {misc.Name}");
                             }
                         }
                         Console.WriteLine("=================================");
                     }
 
-                } else if (input == "pick") {
+                }
+                else if (input == "pick")
+                {
                     var currentItems = player.CurrentRoom.GetItems();
-                    if (currentItems.Count == 0) {
+                    if (currentItems.Count == 0)
+                    {
                         // If there are no items in the room and the player attempts to collect an item, this string will be printed:
                         PrintDelay("You scramble around the room in attempt to find something, but there's nothing there.", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
-                    } else {
+                    }
+                    else
+                    {
                         // This string is printed if the player uses the "pick" command and collects items in a room:
                         PrintDelay("You gather everything you can see, in hope that it comes in handy.", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
-                        foreach (var potion in roomPotions) {
+                        foreach (var potion in roomPotions)
+                        {
                             player.AddPotion(potion);
                             currentItems.Remove(potion);
                         }
-                        foreach (var weapon in roomWeapons) {
+                        foreach (var weapon in roomWeapons)
+                        {
                             player.AddWeapon(weapon);
                             currentItems.Remove(weapon);
                         }
                         player.CurrentRoom.SetItems(currentItems);
                     }
 
-                } else if (input == "heal") {
+                }
+                else if (input == "heal")
+                {
                     var currentItems = player.GetInventory();
-                    if (currentItems.OfType<Potion>().Count() == 0) {
+                    if (currentItems.OfType<Potion>().Count() == 0)
+                    {
                         // If the player has no potions and uses the "heal" command, this string will be printed:
                         PrintDelay("You reach for your potions, only to find you have none.", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
-                    } else {
+                    }
+                    else
+                    {
                         var potions = player.GetPotions();
-                        foreach (var potion in potions) {
+                        foreach (var potion in potions)
+                        {
                             player.drinkPotion(potion);
                             currentItems.Remove(potion);
                         }
@@ -458,57 +526,67 @@ namespace DungeonExplorer
                         Thread.Sleep(2000);
                         Console.Clear();
                     }
-                } else if (input == "use") {
+                }
+                else if (input == "use")
+                {
                     var miscs = player.GetMiscs();
-                    Console.WriteLine("What item do you want to use?");
-                    Console.WriteLine("=================================");
-                        Console.WriteLine("Items in Inventory: ");
-                        if (miscs.Count == 0) {
-                            Console.WriteLine("None.");
-                        } else {
-                            foreach (var misc in miscs) {
-                                Console.WriteLine($"- {misc.Name}");
-                            }
-                        }
+                        Console.WriteLine("What item do you want to use?");
                         Console.WriteLine("=================================");
-                        string useInput = Console.ReadLine();
-                        if (useInput == "key" && player.CurrentRoom.Name == "Ruins") {
-                            if (player.GetWeapons().Count == 0) {
-                                Console.ForegroundColor = ConsoleColor.DarkRed;
-                                Console.WriteLine($"{player.Name} feels dreadfully unprepared. They step back and look elsewhere.");
-                                Console.ForegroundColor = ConsoleColor.White;
-                            } else {
-                                handleKeyEvent(player.CurrentRoom);
-                            }
+                        Console.WriteLine("Items in Inventory: ");
+                    if (miscs.Count == 0)
+                    {
+                        Console.WriteLine("None.");
+                    }
+                    else
+                    {
+                        foreach (var misc in miscs)
+                        {
+                            Console.WriteLine($"- {misc.Name}");
                         }
                     }
+                        Console.WriteLine("=================================");
+                        string useInput = Console.ReadLine();
+                    if (useInput == "key" && player.CurrentRoom.Name == "Ruins")
+                    {
+                        if (player.GetWeapons().Count == 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.WriteLine($"{player.Name} feels dreadfully unprepared. They step back and look elsewhere.");
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
+                        else
+                        {
+                        handleKeyEvent(player.CurrentRoom);
+                        }
+                    }
+                }
 
-
-                if (input == "quit") {
-                    GameInProgress = false;
+                if (input == "quit")
+                {
+                GameInProgress = false;
                 }
             }
         }
-
         private string ExplorerInput()
         {
             // Below are all of the valid inputs that the player can use throughout the duration of the game:
             string[] validInputs = {"inv", "pick", "heal", "attack", "n", "s", "e", "w", "quit", "use"};
 
-            while (true) {
+            while (true)
+            {
                 // This string is printed when the game is awaiting user input:
                 Console.WriteLine("\nWhat do you do?");
                 string input = Console.ReadLine()?.ToLower().Trim();
 
-                if (Array.Exists(validInputs, cmd => cmd == input)) {
-                    return input;
+                if (Array.Exists(validInputs, cmd => cmd == input))
+                {
+                return input;
                 }
 
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 // Error-handling to make sure the game continues gracefully if the user enters an invalid input:
                 Console.WriteLine("Invalid command. Try again.");
                 Console.ForegroundColor = ConsoleColor.White;
-
             }
         }
     }

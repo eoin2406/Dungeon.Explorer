@@ -13,7 +13,7 @@ public class Statistics
 	private static List<int> DamageTaken = new List<int>();
 	public Statistics()
 
-		{
+	{
 		// Rooms explored by the player begins at 0 and will increase for every room they enter:
 		ExploredRooms = 0;
 	}
@@ -69,8 +69,4 @@ public class Statistics
             return statistics;
         }
 	}
-
-
-
-
 }

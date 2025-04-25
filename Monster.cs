@@ -7,11 +7,13 @@ namespace DungeonExplorer
 {
 
     // Monster inherits from Creature as it is a Derived Class. This means every monster will take the attributes from creature:
-    public class Monster : Creature {
+    public class Monster : Creature
+    {
         public Room CurrentRoom { get; set; }
         public int AttackDmg { get; set; }
         public static Random random = new Random();
-        public Monster(string name, int minHealth, int maxHealth, int minDmg, int maxDmg) : base(name, random.Next(minHealth, maxHealth)) {
+        public Monster(string name, int minHealth, int maxHealth, int minDmg, int maxDmg) : base(name, random.Next(minHealth, maxHealth))
+        {
             // Debug.Assert is used to check the player has a name
             Debug.Assert(name != null, "Test failed: Player has no name.");
             // Testing to see if the health is a positive integer
@@ -27,8 +29,10 @@ namespace DungeonExplorer
 
     }
     // Monster names are displayed as a string. Their minumum and maximum health values are stored here, as well as their minimum and maximum damage values: 
-    public class Orc : Monster {
-        public Orc() : base("Orc", 70, 80, 5, 10) {
+    public class Orc : Monster
+    {
+        public Orc() : base("Orc", 70, 80, 5, 10)
+        {
             GoesFirst = random.Next(3) == 1;
         }
         public override string GetMonsterNoise()
@@ -36,8 +40,10 @@ namespace DungeonExplorer
             return ("A Orc shrieks");
         }
     }
-    public class Dragon : Monster {
-        public Dragon() : base("Dragon", 150, 200, 15, 25) {
+    public class Dragon : Monster
+    {
+        public Dragon() : base("Dragon", 150, 200, 15, 25)
+        {
             GoesFirst = random.Next(2) == 1;
         }
         public override string GetMonsterNoise()
@@ -45,8 +51,10 @@ namespace DungeonExplorer
             return ("A Dragon roars");
         }
     }
-    public class Goblin : Monster {
-        public Goblin() : base("Goblin", 40, 50, 1, 7) {
+    public class Goblin : Monster
+    {
+        public Goblin() : base("Goblin", 40, 50, 1, 7)
+        {
             GoesFirst = random.Next(4) == 1;
         }
         public override string GetMonsterNoise()
@@ -55,7 +63,8 @@ namespace DungeonExplorer
         }
     }
     public class Mimic : Monster {
-        public Mimic() : base("Mimic", 100, 120, 10, 17) {
+        public Mimic() : base("Mimic", 100, 120, 10, 17)
+        {
             GoesFirst = random.Next(2) == 1;
         }
         public override string GetMonsterNoise()
@@ -63,8 +72,10 @@ namespace DungeonExplorer
             return ("A Mimic whimpers");
         }
     }
-    public class Vampire : Monster {
-        public Vampire() : base("Vampire", 60, 75, 6, 12) {
+    public class Vampire : Monster
+    {
+        public Vampire() : base("Vampire", 60, 75, 6, 12)
+        {
             GoesFirst = random.Next(3) == 1;
         }
         public override string GetMonsterNoise()
@@ -72,8 +83,10 @@ namespace DungeonExplorer
             return ("A Vampire laughs");
         }
     }
-    public class Skeleton : Monster {
-        public Skeleton() : base("Skeleton", 20, 40, 1, 5) {
+    public class Skeleton : Monster
+    {
+        public Skeleton() : base("Skeleton", 20, 40, 1, 5)
+        {
             GoesFirst = random.Next(4) == 1;
         }
         public override string GetMonsterNoise()
@@ -82,7 +95,8 @@ namespace DungeonExplorer
         }
     }
     public class Minotaur : Monster {
-        public Minotaur() : base("Minotaur", 300, 300, 35, 50) {
+        public Minotaur() : base("Minotaur", 300, 300, 35, 50)
+        {
             GoesFirst = true;
         }
         public override string GetMonsterNoise()

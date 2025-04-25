@@ -24,6 +24,5 @@ namespace DungeonExplorer
         {
             Debug.Assert(value.Length > 0, "Error: Player name must be at least one character in length");
         }
-
     }
 }

@@ -7,10 +7,12 @@ using System.Threading;
 
 namespace DungeonExplorer
 {
-    public class Player : Creature {
+    public class Player : Creature
+    {
         public Room CurrentRoom { get; set; }
         public List<Item> Inventory { get; set; }
-        public Player(string name, int health) : base(name, health) {
+        public Player(string name, int health) : base(name, health)
+        {
             // Debug.Assert is used to check the player has a name
             Debug.Assert(name != null, "Test failed: Player has no name.");
             // Testing to see if the health is a positive integer
@@ -85,7 +87,8 @@ namespace DungeonExplorer
             Inventory.Remove(misc);
         }
 
-        public void SetCurrentRoom(Room room) {
+        public void SetCurrentRoom(Room room)
+        {
             CurrentRoom = room;
         }
 
@@ -97,17 +100,21 @@ namespace DungeonExplorer
         DON'T FORGET
         
         */
-        private Weapon GetStrongestWeapon() {
+        private Weapon GetStrongestWeapon()
+        {
             Weapon strongestWeapon = Inventory.OfType<Weapon>().ToList()[0];
-            foreach (var weapon in Inventory.OfType<Weapon>().ToList()) {
-                if (weapon.AttackDmg > strongestWeapon.AttackDmg) {
+            foreach (var weapon in Inventory.OfType<Weapon>().ToList())
+            {
+                if (weapon.AttackDmg > strongestWeapon.AttackDmg)
+                {
                     strongestWeapon = weapon;
                 }
             }
             return strongestWeapon;
         }
 
-        public void Combat(List<Monster> monsters, Player player) {
+        public void Combat(List<Monster> monsters, Player player)
+        {
             Random random = new Random();
             Console.Clear();
             // Maybe add LINQ to sort monsters by weakest first?
@@ -116,18 +123,21 @@ namespace DungeonExplorer
             Console.WriteLine($"{player.Name} vs the {monster.Name}");
             int roundNum = 1;
 
-            while (player.IsAlive() && monster.IsAlive()) {
+            while (player.IsAlive() && monster.IsAlive())
+            {
                 Console.WriteLine("- - - - - - - - - -");
                 Console.WriteLine($"Round {roundNum}");
 
                 bool isCritHit = random.Next(100) < 10;
 
-                if (monster.GoesFirst) {
+                if (monster.GoesFirst)
+                {
                     Console.WriteLine($"{monster.Name} attacks {player.Name} for {monster.AttackDmg} DMG.");
                     player.TakeDamage(monster.AttackDmg);
                     Statistics.TakenDamage(monster.AttackDmg);
 
-                    if (!player.IsAlive()) {
+                    if (!player.IsAlive())
+                    {
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.WriteLine($"{player.Name} was slain by {monster.Name}");
                         Console.WriteLine("\nYou lose!");
@@ -139,7 +149,8 @@ namespace DungeonExplorer
                     }
 
                     int playerDmg = player.GetStrongestWeapon().GetAttackDmg();
-                    if (isCritHit) {
+                    if (isCritHit)
+                    {
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         playerDmg *= 2;
                         Console.WriteLine($"Critical Hit! {player.Name} attacks {monster.Name} for {playerDmg} DMG.");
@@ -149,14 +160,19 @@ namespace DungeonExplorer
                     monster.TakeDamage(playerDmg);
                     Statistics.DoneDamage(playerDmg);
 
-                    if (!monster.IsAlive()) {
+                    if (!monster.IsAlive())
+                    {
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"{monster.Name} was defeated!");
                         Console.ForegroundColor = ConsoleColor.White;
                     }
-                } else {
+                }
+                
+                else
+                {
                     int playerDmg = player.GetStrongestWeapon().GetAttackDmg();
-                    if (isCritHit) {
+                    if (isCritHit)
+                    {
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         playerDmg *= 2;
                         Console.WriteLine($"Critical Hit! {player.Name} attacks {monster.Name} for {playerDmg} DMG.");
@@ -166,7 +182,8 @@ namespace DungeonExplorer
                     monster.TakeDamage(playerDmg);
                     Statistics.DoneDamage(playerDmg);
 
-                    if (!monster.IsAlive()) {
+                    if (!monster.IsAlive())
+                    {
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"{monster.Name} was defeated!");
                         Console.ForegroundColor = ConsoleColor.White;
@@ -180,7 +197,8 @@ namespace DungeonExplorer
                     player.TakeDamage(monster.AttackDmg);
                     Statistics.TakenDamage(monster.AttackDmg);
 
-                    if (!player.IsAlive()) {
+                    if (!player.IsAlive())
+                    {
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.WriteLine($"{player.Name} was slain by {monster.Name}");
                         Console.WriteLine("\nYou lose!");
@@ -189,7 +207,6 @@ namespace DungeonExplorer
                         Console.ReadLine();
                         Console.WriteLine(Statistics.GameOverStats());
                         Environment.Exit(0);
-
                     }
                 }
 
@@ -197,7 +214,7 @@ namespace DungeonExplorer
                 Thread.Sleep(2000);
                 roundNum += 1;
             }
-            }
         }
-
     }
+
+}
