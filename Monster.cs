@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Threading;
 
 namespace DungeonExplorer
 {
 
     // Monster inherits from Creature as it is a Derived Class. This means every monster will take the attributes from creature:
-    public class Monster : Creature
+    public class Monster : Creature, ICollectable
     {
         public Room CurrentRoom { get; set; }
         public int AttackDmg { get; set; }
@@ -19,6 +20,29 @@ namespace DungeonExplorer
             // Testing to see if the health is a positive integer
             Test.TestForPositiveInteger(minHealth);
             AttackDmg = random.Next(minDmg, maxDmg);
+        }
+
+        private void PrintDelay(string text, int delay)
+        {
+            foreach (char c in text)
+            {
+                Console.Write(c);
+                Thread.Sleep(delay);
+            }
+            Console.Write("\n");
+        }
+        // The Collect() method from the ICollectable interface is used here:
+        public virtual void Collect()
+        {
+            { 
+        // Shows what monster soul has been collected:
+        PrintDelay($"\nUpon its defeat, you absorb the soul of the fallen {this.Name}.\n", 2);
+        Thread.Sleep(3000);
+        Console.Clear();
+
+        // The end-game statistics are updated for the monster' soul collected:
+        Statistics.CollectedMonster();
+            }
         }
         public bool GoesFirst { get; set; } = false;
         public virtual string GetMonsterNoise()

@@ -76,7 +76,7 @@ namespace DungeonExplorer
             {
                 Inventory.Remove(fists);
                 Console.WriteLine("A weapon! No need for my bare knuckles anymore.");
-                Thread.Sleep(2000);
+                Thread.Sleep(1800);
                 Console.Clear();
             }
         }
@@ -226,6 +226,12 @@ namespace DungeonExplorer
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"{monster.Name} was defeated!");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
+                        if (monster is ICollectable collectableMonster)
+                        {
+                            collectableMonster.Collect();
+                        }
                         Console.ForegroundColor = ConsoleColor.White;
                     }
                 }

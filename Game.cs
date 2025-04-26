@@ -23,6 +23,10 @@ using System.Net.NetworkInformation;
     System sleep DONE
     Random suffix messages DONE
     PrintDelay DONE
+NEED TO FIX IT SO ALL MONSTERS DROP SOULS
+NEED TO FIX IT SO WHEN SOULS ARE COLLECTED THE MONSTER IS REMOVED FROM THE ROOM
+NEED TO MAKE IT NOT SHOW THE 0HP OF THE MONMNSTER WHEN YOU DEFEAT IT AND COLLECT SOUL
+MAKE STATISTICS COME UP WITHOUT ANY AWKWARDNESS WHEN YOU LOSE THE GAME
     
 */
 
@@ -79,7 +83,7 @@ namespace DungeonExplorer
             Room cellar = new Room("Cellar", "A damp, musty smell floods the room. The only the light to guide you comes from the ladder hatch above.");
             Room walls = new Room("Crushing walls Corridor", "The walls are open. This room is now safe!");
             Room altar = new Room("Altar", "The moonlight illuminates the large stone altar. You feel it calling you...");
-            ruins = new Room("Ruins", "Remains of a place once magnificent lay sprawled across the hard ground. A grand spruce door stands completely intact. Where could it lead?");
+            ruins = new Room("Ruins", "Remains of a place once magnificent lay sprawled across the hard ground. A grand spruce door stands completely intact.\nWhere could it lead?");
             bossRoom = new Room("Hidden Lair", "Add boss here + functionality");
 
             // Add navigation. W = West. S = South. N = North. E = East:
@@ -429,6 +433,8 @@ namespace DungeonExplorer
                     {
                      // If there are no monsters in a room, the player is unable to attack, and this string is printed:
                         PrintDelay("You can't attack; there are no monsters here.", 1);
+                        Thread.Sleep(2000);
+                        Console.Clear();
                     }
                     else
                     {
@@ -595,7 +601,8 @@ namespace DungeonExplorer
 
                 if (input == "quit")
                 {
-                GameInProgress = false;
+                    Console.WriteLine(Statistics.GameOverStats());
+                    GameInProgress = false;
                 }
             }
         }

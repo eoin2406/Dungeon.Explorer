@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DungeonExplorer
 {
-    public abstract class Item
+    public abstract class Item : ICollectable
     {
         public string Name {get; set;}
         public string Type {get; set;}
@@ -18,9 +18,15 @@ namespace DungeonExplorer
             Type = type;
             Description = description;
         }
+
+        // The ICollectable interface is used here, as well as the Collect() method associated with it:
+        public virtual void Collect()
+        {
+            Console.WriteLine($"You have collected a {Name}. {Description}");
+        }
         public virtual string GetSummary()
         {
-            return ($"This item is a {Name}.");
+            return ($"This item is a {Type}.");
         }
     }
 
