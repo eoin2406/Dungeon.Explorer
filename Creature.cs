@@ -30,6 +30,12 @@ namespace DungeonExplorer
         public void TakeDamage(int damage)
         {
             Health -= damage;
+            
+            // This if statement makes sure the creature health values cannot drop lower than 0:
+            if (Health < 0)
+            {
+                Health = 0;
+            }
         }
 
         // The IsAlive method checks if the creature is alive by seeing if their health is less than 0:

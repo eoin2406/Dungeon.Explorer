@@ -14,7 +14,7 @@ using System.Net.NetworkInformation;
     Save/Load ability
     Add some way to get the key
     Scoring system
-    Statistics Class
+    Statistics Class DONE
     Chest turns into mimic
     Campfire heals (random room) (one use only) (item hidden in ashes)
     Mirror room (Exits swapped)
@@ -70,16 +70,16 @@ namespace DungeonExplorer
         private void InitialiseRooms()
         {
             // Room names and their descriptions. Each room has an individual, unique description:
-            Room cave = new Room("Cave Mouth", "You make your way down through the uneven ground, with a chill down your spine.");
-            Room hall = new Room("Hall", "The hall is faintly lit, only by candlelight. You picture how lively this place must have been at some point.");
+            Room cave = new Room("Cave Mouth", "You make your way down through the uneven ground, a horrible chill goes down your spine.");
+            Room hall = new Room("Hall", "The hall is faintly lit by candlelight. You imagine how lively this place must have been in the past.");
             Room chamber = new Room("Chamber", "Everything feels so still... as if time itself has paused.");
-            Room mirrors = new Room("Room of Mirrors", "You enter a room filled with mirrors, feeling increasingly disoriented.");
-            Room treasury = new Room("Treasury", "Precious gems, ancient relics all on display. In the centre of the room, an encased sword rests on a pedastal.");
+            Room mirrors = new Room("Room of Mirrors", "You enter a room filled with mirrors. You begin to feel very disoriented.");
+            Room treasury = new Room("Treasury", "Precious gems, ancient relics are everywhere. In the centre of the room, an encased sword rests on a pedastal.");
             Room library = new Room("Library", "You feel a strange sensation upon entering the room. The large bookshelves tower over you.");
-            Room cellar = new Room("Cellar", "A damp, musty smell floods the room. With only the light from the ladder hatch above, you fear you aren't alone down here.");
-            Room walls = new Room("Crushing walls Corridor", "You let out a sigh of relief. That could've been bad!");
+            Room cellar = new Room("Cellar", "A damp, musty smell floods the room. The only the light to guide you comes from the ladder hatch above.");
+            Room walls = new Room("Crushing walls Corridor", "The walls are open. This room is now safe!");
             Room altar = new Room("Altar", "The moonlight illuminates the large stone altar. You feel it calling you...");
-            ruins = new Room("Ruins", "Remains of a place once magnificent lay sprawled across the hard ground. Strangely enough, a wooden door remains completely intact. Where could it lead?");
+            ruins = new Room("Ruins", "Remains of a place once magnificent lay sprawled across the hard ground. A grand spruce door stands completely intact. Where could it lead?");
             bossRoom = new Room("Hidden Lair", "Add boss here + functionality");
 
             // Add navigation. W = West. S = South. N = North. E = East:
@@ -124,11 +124,12 @@ namespace DungeonExplorer
             List<Monster> monsters = new List<Monster>
             {
                 new Dragon(),
-                new Orc(),
+                new Spider(),
                 new Goblin(),
                 new Vampire(),
                 new Skeleton(),
                 new Mimic(),
+                new Hound(),
 
             };
 
@@ -140,9 +141,9 @@ namespace DungeonExplorer
             }
 
             // These are the weapons and the potions. They all have their own name, description and number for how much damage they deal:
-            Weapon sword = new Weapon("Broadsword", "A plain broadsword", 12);
+            Weapon sword = new Weapon("Broadsword", "A plain broadsword", 16);
             Weapon club = new Weapon("Club", "An old club", 17);
-            Weapon stick = new Weapon("Stick", "Just a stick", 1);
+            Weapon stick = new Weapon("Stick", "Just a stick", 7);
             Weapon bow = new Weapon("Bow", "A sturdy longbow", 24);
             Weapon longsword = new Weapon("Longsword", "A mighty longsword", 25);
 
@@ -171,14 +172,18 @@ namespace DungeonExplorer
 
             Misc key = new Misc("Mysterious Key", "I wonder what this is used for?");
             player.AddMisc(key);
+
             // Player begins with fists. This is so they can attack monsters without collecting a weapon - preventing any possible errors:
-            Weapon fists = new Weapon("Fists", "Your fists", 1);
+                Weapon fists = new Weapon("Fists", "Your fists", 1);
             player.AddWeapon(fists);
         }
+        // This prints the monsters found in the current room:
         private void PrintMonsters(List<Monster> monsters)
         {
+            // When no monsters are in a room:
             if (monsters == null || monsters.Count == 0)
             {
+                Console.WriteLine("The room feels still. You cannot hear any monsters...\n");
                 return;
             }
             foreach (var monster in monsters)
@@ -192,12 +197,12 @@ namespace DungeonExplorer
                     }
                     else
                     {
-                        Console.WriteLine("DEBUG: MonsterName empty.");
+                        Console.WriteLine("ERROR: MonsterName empty.");
                     }
                 }
             }
         }
-
+        // This prints the weapons found within the current room. It uses a random suffix at the end to make the game more interesting:
         private void PrintWeapons(List<Weapon> weapons)
         {
             if (weapons == null || weapons.Count == 0)
@@ -209,10 +214,10 @@ namespace DungeonExplorer
             foreach (var weapon in weapons)
             {
                 string randomSuffix = Suffixes[random.Next(Suffixes.Count)];
-                Console.WriteLine($"A {weapon.Name}{randomSuffix}");
+                Console.WriteLine($"> A {weapon.Name}{randomSuffix}");
             }
         }
-        
+        // This prints the potions found within the current room:
         private void PrintPotions(List<Potion> potions)
         {
             if (potions == null || potions.Count == 0)
@@ -221,21 +226,24 @@ namespace DungeonExplorer
             }
             foreach (var potion in potions)
             {
-                Console.WriteLine($"You can see a potion of {potion.Name}.");
+                Console.WriteLine($"> You can see a potion of {potion.Name}.");
             }
         }
 
+        // This prints the exits that can be found within the current room:
         private void PrintExits(Dictionary<string, Room> exits)
         {
-            Console.Write("Exits are visible ");
+            Console.Write("\n- Exits are visible ");
 
             var keys = exits.Keys.ToList();
             
             if (exits.Count == 1)
             {
-                Console.WriteLine($"to the {keys[0]}");
-            } else if (exits.Count == 2) {
-                Console.WriteLine($"to the {keys[0]} and {keys[1]}");
+                Console.WriteLine($"to the {keys[0]}.");
+            }
+            else if (exits.Count == 2)
+            {
+                Console.WriteLine($"to the {keys[0]} and {keys[1]}.");
             }
             else
             {
@@ -243,7 +251,7 @@ namespace DungeonExplorer
                 {
                     Console.Write($"to the {keys[i]}, ");
                 }
-                Console.Write($"and {keys[keys.Count - 1]}\n");
+                Console.Write($"and {keys[keys.Count - 1]}.\n");
             }
         }
         private void HandleWallEvent(Room room)
@@ -275,7 +283,8 @@ namespace DungeonExplorer
                     Console.ForegroundColor = ConsoleColor.Green;
                     // This string is printed if the player completes the quicktime event:
                     Console.WriteLine("The walls come to a screeching halt. You did it!");
-                    Thread.Sleep(5000);
+                    Thread.Sleep(3000);
+                        Console.Clear();
                     Console.ForegroundColor = ConsoleColor.White;
                     room.EventTriggered = true;
                     break;
@@ -341,12 +350,12 @@ namespace DungeonExplorer
             player.Name = userName;
             Console.Clear();
             // The player has chosen their name. The game has started and the introduction begins to play:
-            PrintDelay($"I see, your name is {userName}.\nGood luck, {userName}. You will need it...\n\n", 1);
+            PrintDelay($"I see, your name is {userName}!\nGood luck, {userName}. You will need it...\n", 1);
             // A list of player commands is displayed to the user to show them their available options:
-            PrintDelay($"Commands:\n\"attack\" to use your weapon\n\"heal\" to increase your HP\n\"N\", \"S\", \"E\", \"W\" to navigate through rooms\n\"inv\" to view your inventory\n\"pick\" to collect items\n\"use\" to use items\n\"help\" to display a list of commands", 1);
+            PrintDelay($"============== User Commands: ===============\n\n\"attack\" to use your weapon\n\"heal\" to increase your HP\n\"N\", \"S\", \"E\", \"W\" to navigate through rooms\n\"inv\" to view your inventory\n\"pick\" to collect items\n\"use\" to use items\n\"help\" to display a list of commands\n\n=============================================", 1);
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             // The user can type anything, or leave the space empty. They must press enter to begin the game. This is so the game does not begin automatically and allows the user a moment of time to understand the player commands:
-            PrintDelay("\nType anything and click ENTER to begin.", 1);
+            PrintDelay("\nType anything and click ENTER to begin...", 1);
             Console.ReadLine();
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
@@ -368,26 +377,30 @@ namespace DungeonExplorer
                 {
                     PrintDelay($"{player.Name} attempts to force the door open, to no avail.", 1);
                     PrintDelay("There must be some other way to get through.", 1);
-                    Console.Clear();
                     Thread.Sleep(2000);
+                    Console.Clear();
                     player.SetCurrentRoom(ruins);
                 }
 
-                // Display current room information:
+                // Display player name, HP, current room, any monsters found within the room, as well as any items:
                 Console.Write($"{player.Name} ");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write($"({player.GetHealth()} HP) ");
                 Console.ResetColor();
-                Console.WriteLine($"is in a {player.CurrentRoom.Name}.");
+                Console.WriteLine($"is in a {player.CurrentRoom.Name}:");
                 Console.WriteLine($"{player.CurrentRoom.Description}");
                 PrintExits(player.CurrentRoom.GetExits());
+                Console.WriteLine();
                 var monsters = player.CurrentRoom.Monsters;
                 var roomWeapons = player.CurrentRoom.GetItems().OfType<Weapon>().ToList();
                 var roomPotions = player.CurrentRoom.GetItems().OfType<Potion>().ToList();
                 PrintMonsters(monsters);
                 PrintWeapons(roomWeapons);
                 PrintPotions(roomPotions);
+                // A string that tells you to enter "help" for a list of user commands. This is to prevent any confusion for the player:
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
                 Console.WriteLine("\n(Type \"help\" to view a list of user commands)\n");
+                Console.ResetColor();
 
                 // User input:
                 string input = ExplorerInput();
@@ -405,7 +418,7 @@ namespace DungeonExplorer
                     }
                     else
                     {
-                        PrintDelay("There is no exit in that direction...", 1);
+                        PrintDelay("\nThere is no exit in that direction...", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
                     }
@@ -431,8 +444,8 @@ namespace DungeonExplorer
                     var miscs = player.GetMiscs();
                     string choice = Console.ReadLine();
                     if (choice == "weapons")
-                    { 
-                        Console.WriteLine("=================================");
+                    {
+                        Console.Clear();
                         Console.WriteLine("Weapons in Inventory: ");
                         if (weapons.Count == 0)
                         {
@@ -440,9 +453,11 @@ namespace DungeonExplorer
                         }
                         else
                         {
-                            foreach (var weapon in weapons)
+                            // OrderBy LINQ is used here to sort the weapons in the inventory by weakest to strongest:
+                            var sortedWeapons = weapons.OrderBy(weapon => weapon.GetAttackDmg()).ToList();
+
+                            foreach (var weapon in sortedWeapons)
                             {
-                                //Console.WriteLine($"- {weapon.Name}: {weapon.AttackDmg} DMG");
                                 Console.WriteLine($"- {weapon.GetSummary()}");
                             }
                             Console.Write("\n");
@@ -450,11 +465,11 @@ namespace DungeonExplorer
                     }
                     else if (choice == "potions")
                     {
-                        Console.WriteLine("=================================");
+                        Console.Clear();
                         Console.WriteLine("Potions in Inventory: ");
                         if (potions == null || potions.Count == 0)
                         {
-                            Console.WriteLine("None.\n");
+                            Console.WriteLine("You currently have no potions in your inventory..\n");
                         }
                         else
                         {
@@ -468,8 +483,8 @@ namespace DungeonExplorer
                     }
                     else if (choice == "misc")
                     {
-                        Console.WriteLine("=================================");
-                        Console.WriteLine("Items in Inventory: ");
+                        Console.Clear();
+                        Console.WriteLine("Miscellaneous items in Inventory: ");
                         if (miscs.Count == 0)
                         {
                             Console.WriteLine("None.");
@@ -491,14 +506,14 @@ namespace DungeonExplorer
                     if (currentItems.Count == 0)
                     {
                         // If there are no items in the room and the player attempts to collect an item, this string will be printed:
-                        PrintDelay("You scramble around the room in attempt to find something, but there's nothing there.", 1);
+                        PrintDelay("\nYou scramble around the room in attempt to find something, but there's nothing there.", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
                     }
                     else
                     {
                         // This string is printed if the player uses the "pick" command and collects items in a room:
-                        PrintDelay("You gather everything you can see, in hope that it comes in handy.", 1);
+                        PrintDelay("\nYou gather everything you can see, in hope that it comes in handy...", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
                         foreach (var potion in roomPotions)
@@ -521,7 +536,7 @@ namespace DungeonExplorer
                     if (currentItems.OfType<Potion>().Count() == 0)
                     {
                         // If the player has no potions and uses the "heal" command, this string will be printed:
-                        PrintDelay("You reach for your potions, only to find you have none.", 1);
+                        PrintDelay("\nYou reach for your potions, only to find you have none.", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
                     }
@@ -535,14 +550,14 @@ namespace DungeonExplorer
                         }
                         player.SetInventory(currentItems);
                         // This string is printed if the player uses the "heal" command with potion/s in their inventory:
-                        PrintDelay("You drink all of your potions. You feel pumped!", 1);
+                        PrintDelay("\nYou drink all of your potions. You feel pumped!", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
                     }
                 }
                 else if (input == "help")
                     {
-                    DisplayHelp();
+                    GetHelp();
                     }
                 else if (input == "use")
                 {
@@ -584,23 +599,10 @@ namespace DungeonExplorer
                 }
             }
         }
-        private void DisplayHelp()
+        private void GetHelp()
         {
-            Console.WriteLine("\n===== Help Menu =====");
-            Console.WriteLine("Here are the available commands you can use:");
-            Console.WriteLine(" - 'n', 's', 'e', 'w' : Move in the corresponding direction.");
-            Console.WriteLine(" - 'attack' : Attack any monsters in your current room.");
-            Console.WriteLine(" - 'inv' : View your inventory.");
-            Console.WriteLine(" - 'pick' : Pick up items from the current room.");
-            Console.WriteLine(" - 'heal' : Drink potions to restore health.");
-            Console.WriteLine(" - 'use' : Use an item from your inventory.");
-            Console.WriteLine(" - 'help' : Display this help menu.");
-            Console.WriteLine(" - 'quit' : Quit the game.");
-            Console.WriteLine("=====================");
-            Console.WriteLine("\n");
-            Console.WriteLine("\n");
-            Console.WriteLine("\n");
-            Console.WriteLine("\n");
+            Console.Clear();
+           Console.WriteLine("============= User Commands: ===============\n\n\"attack\" to use your weapon\n\"heal\" to increase your HP\n\"N\", \"S\", \"E\", \"W\" to navigate through rooms\n\"inv\" to view your inventory\n\"pick\" to collect items\n\"use\" to use items\n\"help\" to display a list of commands\n\n============================================\n", 1);
         }
         private string ExplorerInput()
         {

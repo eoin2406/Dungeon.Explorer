@@ -37,7 +37,7 @@ namespace DungeonExplorer
         }
         public override string GetSummary()
         {
-            return ($"This weapon is a {Name}.");
+            return ($"{Name} ({AttackDmg} attack damage)");
         }
     }
 
@@ -50,7 +50,7 @@ namespace DungeonExplorer
         }
         public override string GetSummary()
         {
-            return ($"This potion is a {Name}.");
+            return ($"{Name} potion.");
         }
     }
 

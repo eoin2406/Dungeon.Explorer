@@ -28,27 +28,28 @@ namespace DungeonExplorer
         
 
     }
-    // Monster names are displayed as a string. Their minumum and maximum health values are stored here, as well as their minimum and maximum damage values: 
-    public class Orc : Monster
+    // Monster names are displayed as a string. Their minumum and maximum health values are stored here, as well as their minimum and maximum damage values:
+    // These seven monsters can be found at random in rooms when the player is exploring:
+    public class Spider : Monster
     {
-        public Orc() : base("Orc", 70, 80, 5, 10)
+        public Spider() : base("Spider", 60, 80, 5, 10)
         {
             GoesFirst = random.Next(3) == 1;
         }
         public override string GetMonsterNoise()
         {
-            return ("A Orc shrieks");
+            return ("You can hear a Spider scattering around the room...\n");
         }
     }
     public class Dragon : Monster
     {
-        public Dragon() : base("Dragon", 150, 200, 15, 25)
+        public Dragon() : base("Dragon", 100, 120, 15, 25)
         {
             GoesFirst = random.Next(2) == 1;
         }
         public override string GetMonsterNoise()
         {
-            return ("A Dragon roars");
+            return ("A Dragon is watching you. Its ginormous eyes staring deep into yours...\n");
         }
     }
     public class Goblin : Monster
@@ -59,28 +60,29 @@ namespace DungeonExplorer
         }
         public override string GetMonsterNoise()
         {
-            return ("A Goblin screeches");
+            return ("A puny Goblin screeches at you...\n");
         }
     }
-    public class Mimic : Monster {
-        public Mimic() : base("Mimic", 100, 120, 10, 17)
+    public class Mimic : Monster
+    {
+        public Mimic() : base("Mimic", 75, 90, 10, 17)
         {
             GoesFirst = random.Next(2) == 1;
         }
         public override string GetMonsterNoise()
         {
-            return ("A Mimic whimpers");
+            return ("You notice a Mimic lurking, trying its best to fool unfortunate explorers...\n");
         }
     }
     public class Vampire : Monster
     {
-        public Vampire() : base("Vampire", 60, 75, 6, 12)
+        public Vampire() : base("Vampire", 50, 70, 6, 12)
         {
             GoesFirst = random.Next(3) == 1;
         }
         public override string GetMonsterNoise()
         {
-            return ("A Vampire laughs");
+            return ("You hear a Vampire laughing...\n");
         }
     }
     public class Skeleton : Monster
@@ -91,9 +93,21 @@ namespace DungeonExplorer
         }
         public override string GetMonsterNoise()
         {
-            return ("A Skeleton rattles");
+            return ("The frail bones of a Skeleton can be heard rattling...\n");
         }
     }
+    public class Hound : Monster
+    {
+        public Hound() : base("Hound", 30, 40, 4, 10)
+        {
+            GoesFirst = random.Next(4) == 1;
+        }
+        public override string GetMonsterNoise()
+        {
+            return ("You hear the barking of a fierce Hound...\n");
+        }
+    }
+    // This is the boss monster. It cannot spawn in rooms, and can only be battled in the boss room. Its minimum and maximum health are the same every game:
     public class Minotaur : Monster {
         public Minotaur() : base("Minotaur", 300, 300, 35, 50)
         {
@@ -101,7 +115,7 @@ namespace DungeonExplorer
         }
         public override string GetMonsterNoise()
         {
-            return ("A Minotaur groans");
+            return ("The Minotaur roars at you, fueled by anger and hatred...\n");
         }
     }
 

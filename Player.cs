@@ -22,7 +22,70 @@ namespace DungeonExplorer
 
         public void AddWeapon(Weapon weapon)
         {
-            Inventory.Add(weapon);
+            if (Inventory.OfType<Weapon>().Count() == 3)
+            {
+                // This string is shown when the user picks up too many weapons. I made the inventory have a limit on how many weapons you can carry at once:
+                Console.WriteLine("You cannot carry anymore weapons, due to a weight limit!\nWould you like to remove your weakest weapon?\n(Enter \"yes\" or \"no\")\n");
+
+                string input = Console.ReadLine()?.ToLower().Trim();
+
+                // If the player types "yes", their weakest weapon will be removed from their inventory:
+                if (input == "yes")
+                {
+                    var weapons = ChooseWeapons();
+
+                    if (weapons.Count > 0)
+                    {
+                        var WeakWeapon = weapons.Last();
+                        Inventory.Remove(WeakWeapon);
+                        // This string is printed when you remove your weak weapon and pick up the newly discovered one:
+                        Console.WriteLine($"\nYour weakest weapon ({WeakWeapon.Name}) was discarded, and you picked up the {weapon.Name}!\n");
+
+                        Inventory.Add(weapon);
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nYou have no weapons to dispose of...\n");
+                    }
+                }
+                else
+                {
+                    // This string is printed if the user chooses not to pick up the newly discovered weapon:
+                    Console.WriteLine("\nYou chose not to discard your weakest weapon. The newly discovered weapon was not added...\n");
+                }
+            }
+            else
+            {
+                // Removes the fists as a weapon if another weapon is collected:
+                Inventory.Add(weapon);
+
+                if (weapon.Name != "Fists")
+                {
+                    RemoveFists();
+                }
+            }
+
+        }
+
+        // Method used to remove the fists once a weapon has been collected:
+        private void RemoveFists()
+        {
+            var fists = Inventory.OfType<Weapon>().FirstOrDefault(w => w.Name.Equals("Fists", StringComparison.OrdinalIgnoreCase));
+
+            if (fists != null)
+            {
+                Inventory.Remove(fists);
+                Console.WriteLine("A weapon! No need for my bare knuckles anymore.");
+                Thread.Sleep(2000);
+                Console.Clear();
+            }
+        }
+
+        public List<Weapon> ChooseWeapons()
+        {
+            var NumberedWeapons = Inventory.OfType<Weapon>().ToList();
+            var WeaponsSorted = from Weapon weapon in NumberedWeapons orderby weapon.AttackDmg descending select weapon;
+            return WeaponsSorted.ToList();
         }
 
         public void AddPotion(Potion potion)
@@ -66,7 +129,6 @@ namespace DungeonExplorer
             List<Potion> PotionsList = PotionsSorted.ToList();
             if (PotionsList.Count == 0)
             {
-                Console.WriteLine("You currently have no potions in your inventory.");
                 return null;
             }
             return PotionsList;
