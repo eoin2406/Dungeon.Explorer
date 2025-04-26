@@ -171,6 +171,7 @@ namespace DungeonExplorer
 
             Misc key = new Misc("Mysterious Key", "I wonder what this is used for?");
             player.AddMisc(key);
+            // Player begins with fists. This is so they can attack monsters without collecting a weapon - preventing any possible errors:
             Weapon fists = new Weapon("Fists", "Your fists", 1);
             player.AddWeapon(fists);
         }
@@ -328,7 +329,7 @@ namespace DungeonExplorer
         {
 
             // This text is printed at the beginning of the game. The program asks the player for their name:
-            PrintDelay("Before you embark on the journey of a lifetime, please tell me your name: ", 1);
+            PrintDelay("Explorer, before you attempt to explore the dungeons, you must tell me your name: ", 1);
             string userName = Console.ReadLine();
             // Debug.Assert is used to see if the player's name is more than 0 characters. If it is, an error message will be displayed to the player and the game will restart from the beginning again:
             Test.TestForPlayerNameLength(userName);
@@ -340,9 +341,9 @@ namespace DungeonExplorer
             player.Name = userName;
             Console.Clear();
             // The player has chosen their name. The game has started and the introduction begins to play:
-            PrintDelay($"{userName} began their epic adventure through the deep dungeons...\n\n", 1);
-            // A list of player commands is displayed to the user to show them their available options throughout the game's duration:
-            PrintDelay($"Commands:\n\"attack\" to use your weapon\n\"heal\" to increase your HP\n\"N\", \"S\", \"E\", \"W\" to navigate through rooms\n\"inv\" to view your inventory\n\"pick\" to collect items\n\"use\" to use items", 1);
+            PrintDelay($"I see, your name is {userName}.\nGood luck, {userName}. You will need it...\n\n", 1);
+            // A list of player commands is displayed to the user to show them their available options:
+            PrintDelay($"Commands:\n\"attack\" to use your weapon\n\"heal\" to increase your HP\n\"N\", \"S\", \"E\", \"W\" to navigate through rooms\n\"inv\" to view your inventory\n\"pick\" to collect items\n\"use\" to use items\n\"help\" to display a list of commands", 1);
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             // The user can type anything, or leave the space empty. They must press enter to begin the game. This is so the game does not begin automatically and allows the user a moment of time to understand the player commands:
             PrintDelay("\nType anything and click ENTER to begin.", 1);
@@ -372,8 +373,12 @@ namespace DungeonExplorer
                     player.SetCurrentRoom(ruins);
                 }
 
-                // Display current room information:        
-                Console.WriteLine($"{player.Name} ({player.GetHealth()} HP) is in a {player.CurrentRoom.Name}.");
+                // Display current room information:
+                Console.Write($"{player.Name} ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"({player.GetHealth()} HP) ");
+                Console.ResetColor();
+                Console.WriteLine($"is in a {player.CurrentRoom.Name}.");
                 Console.WriteLine($"{player.CurrentRoom.Description}");
                 PrintExits(player.CurrentRoom.GetExits());
                 var monsters = player.CurrentRoom.Monsters;
@@ -382,6 +387,7 @@ namespace DungeonExplorer
                 PrintMonsters(monsters);
                 PrintWeapons(roomWeapons);
                 PrintPotions(roomPotions);
+                Console.WriteLine("\n(Type \"help\" to view a list of user commands)\n");
 
                 // User input:
                 string input = ExplorerInput();
@@ -396,6 +402,12 @@ namespace DungeonExplorer
                         Statistics.RoomsExplored();
                         Console.Clear();
                         continue;
+                    }
+                    else
+                    {
+                        PrintDelay("There is no exit in that direction...", 1);
+                        Thread.Sleep(2000);
+                        Console.Clear();
                     }
                 }
                 else if (input == "attack")
@@ -412,10 +424,11 @@ namespace DungeonExplorer
                 }
                 else if (input == "inv")
                 {
+                    Console.Clear();
+                    Console.WriteLine("==== Inventory: ====\n\nType \"weapons\" to view your weapons\nType \"potions\" to view your potions.\nType \"misc\" to view miscellaneous items:\n");
                     var weapons = player.GetWeapons();
                     var potions = player.GetPotions();
                     var miscs = player.GetMiscs();
-                    Console.WriteLine("Type \"weapons\" to view your weapons, \"potions\" to view your potions, or \"misc\" to view miscellaneous items:");
                     string choice = Console.ReadLine();
                     if (choice == "weapons")
                     { 
@@ -527,6 +540,10 @@ namespace DungeonExplorer
                         Console.Clear();
                     }
                 }
+                else if (input == "help")
+                    {
+                    DisplayHelp();
+                    }
                 else if (input == "use")
                 {
                     var miscs = player.GetMiscs();
@@ -567,10 +584,28 @@ namespace DungeonExplorer
                 }
             }
         }
+        private void DisplayHelp()
+        {
+            Console.WriteLine("\n===== Help Menu =====");
+            Console.WriteLine("Here are the available commands you can use:");
+            Console.WriteLine(" - 'n', 's', 'e', 'w' : Move in the corresponding direction.");
+            Console.WriteLine(" - 'attack' : Attack any monsters in your current room.");
+            Console.WriteLine(" - 'inv' : View your inventory.");
+            Console.WriteLine(" - 'pick' : Pick up items from the current room.");
+            Console.WriteLine(" - 'heal' : Drink potions to restore health.");
+            Console.WriteLine(" - 'use' : Use an item from your inventory.");
+            Console.WriteLine(" - 'help' : Display this help menu.");
+            Console.WriteLine(" - 'quit' : Quit the game.");
+            Console.WriteLine("=====================");
+            Console.WriteLine("\n");
+            Console.WriteLine("\n");
+            Console.WriteLine("\n");
+            Console.WriteLine("\n");
+        }
         private string ExplorerInput()
         {
             // Below are all of the valid inputs that the player can use throughout the duration of the game:
-            string[] validInputs = {"inv", "pick", "heal", "attack", "n", "s", "e", "w", "quit", "use"};
+            string[] validInputs = {"inv", "pick", "heal", "attack", "n", "s", "e", "w", "quit", "use", "help"};
 
             while (true)
             {
