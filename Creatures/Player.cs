@@ -266,11 +266,12 @@ namespace DungeonExplorer
                     if (!player.IsAlive())
                     {
                         Console.ForegroundColor = ConsoleColor.DarkRed;
-                        Console.WriteLine($"{player.Name} was slain by {monster.Name}");
-                        Console.WriteLine("\nYou lose!");
+                        PrintDelay($"{player.Name} was slain by {monster.Name}", 2);
                         Console.ForegroundColor = ConsoleColor.White;
                         Thread.Sleep(2000);
+                        Console.WriteLine("Game Over!\nPress any key to view your statistics...");
                         Console.ReadLine();
+                        Console.Clear();
                         Console.WriteLine(Statistics.GameOverStats());
                         Environment.Exit(0);
                     }

@@ -56,7 +56,7 @@ namespace DungeonExplorer
         }
         public override string GetSummary()
         {
-            return ($"{Name} potion.");
+            return ($"{Name} potion");
         }
     }
 

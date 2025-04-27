@@ -262,20 +262,23 @@ namespace DungeonExplorer
         }
         private void HandleWallEvent(Room room)
         {
+            int timerLine = 5;
             // This is a random quicktime event in one of the rooms. If you fail the challenge, the walls close in on the player and they lose:
             Console.Clear();
-            Console.WriteLine("Quick! You must disable the mechanism forcing the walls to close in on you!");
-            Console.WriteLine("Type the alphabet as fast as you can to survive!");
+            Console.Write("Quick! You must disable the mechanism that is forcing the walls to close in on you!\n");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("(Type the alphabet as fast as you can to disable the mechanism)");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("Press ENTER to start the quicktime event.");
+            Console.Write("\nPress ENTER to start the quicktime event...");
             Console.ForegroundColor = ConsoleColor.White;
             Console.ReadLine();
             Console.Clear();
-            Console.WriteLine("Quicktime event: Type the alphabet (no spaces, all lowercase)");
+            Console.WriteLine("Type alphabet (no spaces, all lowercase)");
 
             bool isTimeUp = false;
             DateTime startTime = DateTime.Now;
-            DateTime endTime = startTime.AddSeconds(10);
+            // The player has 15 seconds to complete the quicktime event:
+            DateTime endTime = startTime.AddSeconds(15);
 
             // This is the correct string the user should input to pass the quicktime event:
             string correctInput = "abcdefghijklmnopqrstuvwxyz";
@@ -287,7 +290,6 @@ namespace DungeonExplorer
                 while (DateTime.Now < endTime)
                 {
                     TimeSpan timeLeft = endTime - DateTime.Now;
-                    Console.SetCursorPosition(0, 0);
                     Console.WriteLine($"The walls close in: {timeLeft.Seconds} seconds...");
                     // Using Thread.Sleep, I can make the timer update every second:
                     Thread.Sleep(1000);
@@ -318,11 +320,11 @@ namespace DungeonExplorer
             if (!isTimeUp || userInput != correctInput)
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
+                PrintDelay($"The walls close in and the brave {player.Name} is crushed...", 1);
                 Console.Clear();
-                Console.WriteLine("The walls close in and the brave adventurer is crushed...");
-                Console.WriteLine($"\n\n {player.Name} was slain!");
-                Thread.Sleep(5000);
-                Console.WriteLine("Press any key to view your statistics...");
+                Thread.Sleep(2000);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("Game Over!\nPress any key to view your statistics...");
                 Console.ReadLine();
                 Console.Clear();
                 Console.WriteLine(Statistics.GameOverStats());
@@ -402,11 +404,11 @@ namespace DungeonExplorer
                     HandleWallEvent(player.CurrentRoom);
                 }
 
-                if (player.CurrentRoom.Name == "Treasury" && !player.CurrentRoom.EventTriggered)
+                if (player.CurrentRoom.Name == "the Treasury" && !player.CurrentRoom.EventTriggered)
                 {
                     handleMimicEvent(player.CurrentRoom);
                 }
-                if (player.CurrentRoom.Name == "Hidden Lair" && bossRoom.EventTriggered == false)
+                if (player.CurrentRoom.Name == "a Hidden Lair" && bossRoom.EventTriggered == false)
                 {
                     PrintDelay($"{player.Name} attempts to force the door open, to no avail.", 1);
                     PrintDelay("There must be some other way to get through.", 1);
@@ -473,7 +475,7 @@ namespace DungeonExplorer
                 else if (input == "inv")
                 {
                     Console.Clear();
-                    Console.WriteLine("==== Inventory: ====\n\nType \"weapons\" to view your weapons\nType \"potions\" to view your potions.\nType \"misc\" to view miscellaneous items:\n");
+                    Console.WriteLine("============== Inventory: ==============\n\nType \"weapons\" to view your weapons.\nType \"potions\" to view your potions.\nType \"misc\" to view miscellaneous items.\n\n========================================");
                     var weapons = player.GetWeapons();
                     var potions = player.GetPotions();
                     var miscs = player.GetMiscs();
@@ -481,7 +483,7 @@ namespace DungeonExplorer
                     if (choice == "weapons")
                     {
                         Console.Clear();
-                        Console.WriteLine("Weapons in Inventory: ");
+                        Console.WriteLine("======================= Weapons: =======================\n");
                         if (weapons.Count == 0)
                         {
                             Console.WriteLine("None.");
@@ -495,16 +497,17 @@ namespace DungeonExplorer
                             {
                                 Console.WriteLine($"- {weapon.GetSummary()}");
                             }
-                            Console.Write("\n");
+                            Console.Write("\n========================================================\n\n");
                         }
                     }
                     else if (choice == "potions")
                     {
                         Console.Clear();
-                        Console.WriteLine("Potions in Inventory: ");
+                        Console.WriteLine("======================= Potions: =======================\n");
                         if (potions == null || potions.Count == 0)
                         {
-                            Console.WriteLine("You currently have no potions in your inventory..\n");
+                            Console.WriteLine("You currently have no potions in your inventory...\n");
+                            Console.WriteLine("\n========================================================\n");
                         }
                         else
                         {
@@ -513,13 +516,13 @@ namespace DungeonExplorer
                                 //Console.WriteLine($"- {potion.Name}: {potion.HealingFactor} HP");
                                 Console.WriteLine($"- {potion.GetSummary()}");
                             }
-                            Console.Write("\n");
+                            Console.Write("\n========================================================\n\n");
                         }
                     }
                     else if (choice == "misc")
                     {
                         Console.Clear();
-                        Console.WriteLine("Miscellaneous items in Inventory: ");
+                        Console.WriteLine("======================= Miscellaneous: =======================\n");
                         if (miscs.Count == 0)
                         {
                             Console.WriteLine("None.");
@@ -531,7 +534,7 @@ namespace DungeonExplorer
                              Console.WriteLine($"- {misc.Name}");
                             }
                         }
-                        Console.WriteLine("=================================");
+                        Console.WriteLine("\n==============================================================\n");
                     }
 
                 }
