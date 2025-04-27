@@ -10,7 +10,7 @@ namespace DungeonExplorer
         public Dictionary<string, Room> Exits {get; set;}
         public List<Monster> Monsters {get; set;}
         public List<Item> Items {get; set;}
-        public bool EventTriggered {get; set;} = false;
+        public bool EventTriggered {get; set;}
 
         public Room(string name, string description)
         {
@@ -19,6 +19,7 @@ namespace DungeonExplorer
             Exits = new Dictionary<string, Room>();
             Monsters = new List<Monster>();
             Items = new List<Item>();
+            EventTriggered = false;
         }
 
         public void SetDescription(string description)

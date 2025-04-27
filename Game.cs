@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 
 /* IDEAS:
 
@@ -27,6 +28,7 @@ NEED TO FIX IT SO ALL MONSTERS DROP SOULS
 NEED TO FIX IT SO WHEN SOULS ARE COLLECTED THE MONSTER IS REMOVED FROM THE ROOM
 NEED TO MAKE IT NOT SHOW THE 0HP OF THE MONMNSTER WHEN YOU DEFEAT IT AND COLLECT SOUL
 MAKE STATISTICS COME UP WITHOUT ANY AWKWARDNESS WHEN YOU LOSE THE GAME
+HIDDEN LAIR BROKE
     
 */
 
@@ -41,7 +43,7 @@ namespace DungeonExplorer
         public Game()
         {
             Rooms = new List<Room>();
-            player = new Player("Name", 100);
+            player = new Player("Name", 500);
             InitialiseRooms();
             player.CurrentRoom = Rooms[0];
 
@@ -74,17 +76,17 @@ namespace DungeonExplorer
         private void InitialiseRooms()
         {
             // Room names and their descriptions. Each room has an individual, unique description:
-            Room cave = new Room("Cave Mouth", "You make your way down through the uneven ground, a horrible chill goes down your spine.");
-            Room hall = new Room("Hall", "The hall is faintly lit by candlelight. You imagine how lively this place must have been in the past.");
-            Room chamber = new Room("Chamber", "Everything feels so still... as if time itself has paused.");
-            Room mirrors = new Room("Room of Mirrors", "You enter a room filled with mirrors. You begin to feel very disoriented.");
-            Room treasury = new Room("Treasury", "Precious gems, ancient relics are everywhere. In the centre of the room, an encased sword rests on a pedastal.");
-            Room library = new Room("Library", "You feel a strange sensation upon entering the room. The large bookshelves tower over you.");
-            Room cellar = new Room("Cellar", "A damp, musty smell floods the room. The only the light to guide you comes from the ladder hatch above.");
-            Room walls = new Room("Crushing walls Corridor", "The walls are open. This room is now safe!");
-            Room altar = new Room("Altar", "The moonlight illuminates the large stone altar. You feel it calling you...");
-            ruins = new Room("Ruins", "Remains of a place once magnificent lay sprawled across the hard ground. A grand spruce door stands completely intact.\nWhere could it lead?");
-            bossRoom = new Room("Hidden Lair", "Add boss here + functionality");
+            Room cave = new Room("a Cave Mouth", "You make your way down through the uneven ground, a horrible chill goes down your spine.");
+            Room hall = new Room("the Great Hall", "The hall is faintly lit by candlelight. You imagine how lively this place must have been in the past.");
+            Room chamber = new Room("a Chamber", "Everything feels so still... as if time itself has paused.");
+            Room mirrors = new Room("the Room of Mirrors", "You enter a room filled with mirrors. You begin to feel very disoriented.");
+            Room treasury = new Room("the Treasury", "Precious gems, ancient relics are everywhere. In the centre of the room, an encased sword rests on a pedastal.");
+            Room library = new Room("the Library", "You feel a strange sensation upon entering the room. The large bookshelves tower over you.");
+            Room cellar = new Room("a Cellar", "A damp, musty smell floods the room. The only the light to guide you comes from the ladder hatch above.");
+            Room walls = new Room("the Crushing walls Corridor", "The walls are open. This room is now safe!");
+            Room altar = new Room("an Altar", "The moonlight illuminates the large stone altar. You feel it calling you...");
+            ruins = new Room("a Ruin", "Remains of a place once magnificent lay sprawled across the hard ground. A grand spruce door stands completely intact.\nWhere could it lead?");
+            bossRoom = new Room("a Hidden Lair", "Add boss here + functionality");
 
             // Add navigation. W = West. S = South. N = North. E = East:
             cave.AddExit("W", ruins);
@@ -273,43 +275,69 @@ namespace DungeonExplorer
 
             bool isTimeUp = false;
             DateTime startTime = DateTime.Now;
-            DateTime endTime = startTime.AddSeconds(10); 
+            DateTime endTime = startTime.AddSeconds(10);
 
-            while (!isTimeUp && DateTime.Now < endTime)
+            // This is the correct string the user should input to pass the quicktime event:
+            string correctInput = "abcdefghijklmnopqrstuvwxyz";
+            // This will allow the user's player input to be stored whilst they are typing:
+            string userInput = "";
+
+            Task.Run(() =>
             {
-                if (Console.KeyAvailable)
-                    {string quicktimeInput = Console.ReadLine()?.Trim();
-
-                    if (quicktimeInput == "abcdefghijklmnopqrstuvwxyz")
+                while (DateTime.Now < endTime)
                 {
-                    isTimeUp = true;
-                    Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    // This string is printed if the player completes the quicktime event:
-                    Console.WriteLine("The walls come to a screeching halt. You did it!");
-                    Thread.Sleep(3000);
-                        Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.White;
-                    room.EventTriggered = true;
-                    break;
+                    TimeSpan timeLeft = endTime - DateTime.Now;
+                    Console.SetCursorPosition(0, 0);
+                    Console.WriteLine($"The walls close in: {timeLeft.Seconds} seconds...");
+                    // Using Thread.Sleep, I can make the timer update every second:
+                    Thread.Sleep(1000);
+                }
+            });
+
+            while (DateTime.Now < endTime)
+            {
+                if(Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey(intercept: true).KeyChar;
+
+                    if (char.IsLetter(key))
+                    {
+                        userInput += key.ToString().ToLower();
+                        Console.Write(key.ToString().ToLower());
+
+                        if (userInput == correctInput)
+                        {
+                            isTimeUp = true;
+                            break;
+                        }    
+                    }    
                 }
             }
-        }
 
-            if (!isTimeUp)
+            // If the player fails the quicktime event:
+            if (!isTimeUp || userInput != correctInput)
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.Clear();
-                // This string is printed if the player fails the quicktime event:
                 Console.WriteLine("The walls close in and the brave adventurer is crushed...");
                 Console.WriteLine($"\n\n {player.Name} was slain!");
                 Thread.Sleep(5000);
+                Console.WriteLine("Press any key to view your statistics...");
                 Console.ReadLine();
+                Console.Clear();
                 Console.WriteLine(Statistics.GameOverStats());
                 Environment.Exit(0);
             }
+            // If the player completes the quicktime event:
+            Console.Clear();
+            Console.ForegroundColor= ConsoleColor.Green;
+            PrintDelay("The walls come to a screeching halt. You did it!", 2);
+            Thread.Sleep(3000);
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
+            room.EventTriggered = true;
         }
-        
+
         private void handleMimicEvent(Room room)
         {
             Console.WriteLine("Test/Placholder. TO DO!"); /////////////NEEEEEEEEEEEEEEEEEEEEDS WORK
@@ -367,9 +395,10 @@ namespace DungeonExplorer
             bool GameInProgress = true;
             while (GameInProgress)
             {
-                // Wall crushing event check
-                if (player.CurrentRoom.Name == "Crushing walls Corridor" && !player.CurrentRoom.EventTriggered)
+                // Checks if the player is in the crushing walls corridor:
+                if (player.CurrentRoom.Name == "the Crushing walls Corridor" && !player.CurrentRoom.EventTriggered)
                 {
+                    // Runs the event if they are:
                     HandleWallEvent(player.CurrentRoom);
                 }
 
@@ -391,7 +420,7 @@ namespace DungeonExplorer
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write($"({player.GetHealth()} HP) ");
                 Console.ResetColor();
-                Console.WriteLine($"is in a {player.CurrentRoom.Name}:");
+                Console.WriteLine($"is in {player.CurrentRoom.Name}:");
                 Console.WriteLine($"{player.CurrentRoom.Description}");
                 PrintExits(player.CurrentRoom.GetExits());
                 Console.WriteLine();
@@ -561,10 +590,12 @@ namespace DungeonExplorer
                         Console.Clear();
                     }
                 }
+                // Displays help menu:
                 else if (input == "help")
                     {
                     GetHelp();
                     }
+                // Asks the player what item they want to use from their inventory:
                 else if (input == "use")
                 {
                     var miscs = player.GetMiscs();
@@ -606,6 +637,7 @@ namespace DungeonExplorer
                 }
             }
         }
+        // This allows the player to see all of the valid user inputs:
         private void GetHelp()
         {
             Console.Clear();
