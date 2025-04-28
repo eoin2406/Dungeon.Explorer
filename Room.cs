@@ -64,7 +64,7 @@ namespace DungeonExplorer
         }
         public void UnlockBossDoor(List<Item> inventory)
         {
-            if (inventory.Any(i => i is MysteriousKey));
+            if (inventory.Any(i => i is MysteriousKey))
             {
                 Locked = false;
                 Console.WriteLine("The Boss Room opens!");

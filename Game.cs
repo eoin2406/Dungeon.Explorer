@@ -138,6 +138,7 @@ namespace DungeonExplorer
                 new Vampire(),
                 new Skeleton(),
                 new Hound(),
+
             };
 
             Random random = new Random();
@@ -232,6 +233,7 @@ namespace DungeonExplorer
                 Console.WriteLine($"> You can see a potion of {potion.Name}.");
             }
         }
+
         // This prints the exits that can be found within the current room:
         private void PrintExits(Dictionary<string, Room> exits)
         {
@@ -362,13 +364,13 @@ namespace DungeonExplorer
             room.EventTriggered = true;
         }
 
-        //private void handleMimicEvent(Room room)
-        //{
-        //}
+        private void handleMimicEvent(Room room)
+        {
+        }
 
         private void handleKeyEvent(Room room)
         {
-            if (bossRoom.Locked && player.GetInventory().Any(i => i is MysteriousKey))
+            if (bossRoom.Locked)
             {
                 bossRoom.UnlockBossDoor(player.GetInventory());
             }
@@ -393,7 +395,7 @@ namespace DungeonExplorer
 
                 player.Combat(monsters, player);
             }
-        }
+            }
 
 
         public void Start()
@@ -432,26 +434,18 @@ namespace DungeonExplorer
                     HandleWallEvent(player.CurrentRoom);
                 }
 
-                //if (player.CurrentRoom.Name == "the Treasury" && !player.CurrentRoom.EventTriggered)
-                //{
-                //    handleMimicEvent(player.CurrentRoom);
-                //}
-                if (player.CurrentRoom.Name == "a Hidden Lair")
+                if (player.CurrentRoom.Name == "the Treasury" && !player.CurrentRoom.EventTriggered)
                 {
-                    if (bossRoom.EventTriggered == false)
-                    {
-                        if (player.GetInventory().Any(i => i is MysteriousKey))
-                        {
-                            handleKeyEvent(player.CurrentRoom);
-                        }
-                        else
-                        {
-                            PrintDelay($"{player.Name} attempts to force the door open, to no avail.", 1);
-                            PrintDelay("There must be some other way to get through.", 1);
-                            Thread.Sleep(2000);
-                            Console.Clear();
-                            player.SetCurrentRoom(ruins);
-                        }
+                    handleMimicEvent(player.CurrentRoom);
+                }
+                if (player.CurrentRoom.Name == "a Hidden Lair" && bossRoom.EventTriggered == false)
+                {
+                    PrintDelay($"{player.Name} attempts to force the door open, to no avail.", 1);
+                    PrintDelay("There must be some other way to get through.", 1);
+                    Thread.Sleep(2000);
+                    Console.Clear();
+                    player.SetCurrentRoom(ruins);
+                }
 
                 // Display player name, HP, current room, any monsters found within the room, as well as any items:
                 Console.Write($"{player.Name} ");
