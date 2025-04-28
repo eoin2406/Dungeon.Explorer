@@ -76,8 +76,8 @@ public class Statistics
 		else
 		{
 			statistics = ($"Statistics:\n\nYou dealt {ListSummary(DamageDone)} damage.\nYou attacked {ListNum(DamageDone)} times. \n\n") +
-			($"You took {ListSummary(DamageTaken)} damage.\nYou were attacked {ListNum(DamageTaken)} times. \n\n") +
-			($"You explored {ExploredRooms} rooms (Including re-entering rooms).\n\n");
+			($"You took {ListSummary(DamageTaken)} damage.\nYou were attacked {ListNum(DamageTaken)} times, and the average damage to you per attack was: {ListAverage(DamageTaken)}. \n\n") +
+            ($"You explored {ExploredRooms} rooms (Including re-entering rooms).\n\n");
 		}
 		// "Thanks for playing" is shown as it is an end game screen when these statistics are displayed:
 		statistics += ($"You collected {MonstersCollected} souls from slain foes.\n\nThank you for playing!");
