@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DungeonExplorer
-{
+{  
+    // Inherits from monster:
     public class Goblin : Monster
     {
+        // All monsters have unique values. Being minimum HP, maximum HP, minimum attack damage, and maximum attack damage. This allows for randomness:
         public Goblin() : base("Goblin", 40, 50, 3, 7)
         {
             GoesFirst = random.Next(4) == 1;

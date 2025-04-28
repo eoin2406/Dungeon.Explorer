@@ -42,6 +42,7 @@ public class Statistics
 		DamageTaken.Add(damage);
 		return;
 	}
+	// This is for collecting monster souls:
 	public static void CollectedMonster()
 		{
 			MonstersCollected++;
@@ -60,6 +61,7 @@ public class Statistics
 		int listnum = ListNum(list);
 		return listsummary / listnum;
 	}
+	// This is the logic for all of the statistics stored and later displayed at the end of the game:
 	public static string GameOverStats()
 	{
 		string statistics = "";

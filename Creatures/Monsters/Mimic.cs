@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace DungeonExplorer
 {
+    // Inherits from monster:
     public class Mimic : Monster
     {
         private Player player;
+        // All monsters have unique values. Being minimum HP, maximum HP, minimum attack damage, and maximum attack damage. This allows for randomness:
         public Mimic(Player player) : base("Mimic", 75, 90, 10, 17)
         {
             this.player = player;

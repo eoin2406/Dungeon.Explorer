@@ -9,29 +9,6 @@ using System.Threading;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
-/* IDEAS:
-
-    Timed event DONE (Fix timer not working now)
-    Save/Load ability
-    Add some way to get the key
-    Scoring system
-    Statistics Class DONE
-    Chest turns into mimic
-    Campfire heals (random room) (one use only) (item hidden in ashes)
-    Mirror room (Exits swapped)
-    Locked door (exit) requires key DONE
-    Boss battle DONE    
-    System sleep DONE
-    Random suffix messages DONE
-    PrintDelay DONE
-NEED TO FIX IT SO ALL MONSTERS DROP SOULS
-NEED TO FIX IT SO WHEN SOULS ARE COLLECTED THE MONSTER IS REMOVED FROM THE ROOM
-NEED TO MAKE IT NOT SHOW THE 0HP OF THE MONMNSTER WHEN YOU DEFEAT IT AND COLLECT SOUL
-MAKE STATISTICS COME UP WITHOUT ANY AWKWARDNESS WHEN YOU LOSE THE GAME
-HIDDEN LAIR BROKE
-    
-*/
-
 namespace DungeonExplorer
 {
     internal class Game
@@ -207,6 +184,7 @@ namespace DungeonExplorer
                 }
             }
         }
+
         // This prints the weapons found within the current room. It uses a random suffix at the end to make the game more interesting:
         private void PrintWeapons(List<Weapon> weapons)
         {
@@ -222,6 +200,7 @@ namespace DungeonExplorer
                 Console.WriteLine($"> A {weapon.Name}{randomSuffix}");
             }
         }
+
         // This prints the potions found within the current room:
         private void PrintPotions(List<Potion> potions)
         {
@@ -261,7 +240,6 @@ namespace DungeonExplorer
         }
         private void HandleWallEvent(Room room)
         {
-            int timerLine = 5;
             // This is a random quicktime event in one of the rooms. If you fail the challenge, the walls close in on the player and they lose:
             Console.Clear();
             Console.Write("Quick! You must disable the mechanism that is forcing the walls to close in on you!\n");
@@ -286,8 +264,6 @@ namespace DungeonExplorer
 
             int timerLineY = Console.CursorTop;
             int typingLineY = timerLineY + 1;
-            // This will handle the timer, once the quicktime event is over, the timer will disappear:
-            bool timerCompleted = false;
 
             Task.Run(() =>
             {
@@ -306,8 +282,7 @@ namespace DungeonExplorer
 
                     if (timeLeft.TotalSeconds <= 0 || isTimeUp) break;
                 }
-                // Once the time is up, the timer will be flagged as completed:
-                timerCompleted = true;
+
             });
             while (DateTime.Now < endTime && !isTimeUp)
             {
@@ -364,11 +339,12 @@ namespace DungeonExplorer
             Console.ForegroundColor = ConsoleColor.White;
             room.EventTriggered = true;
         }
-
+        // Mimic event:
         private void handleMimicEvent(Room room)
         {
         }
 
+        // Logic for the boss room:
         private void handleKeyEvent(Room room)
         {
             room.EventTriggered = true;
@@ -382,12 +358,13 @@ namespace DungeonExplorer
             // Move player to boss room!
             player.SetCurrentRoom(bossRoom);
 
-            // Ensure bossRoom has only the Minotaur
+            // Ensure the Bosss Room has only the Minotaur spawn inside of it:
             bossRoom.Monsters.Clear();
             bossRoom.AddMonster(new Minotaur());
 
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Red;
+            // Upon entering the boss room:
             PrintDelay("The room shakes as a loud roar erupts from the creature's mouth.", 1);
             Thread.Sleep(1000);
             PrintDelay("You question if this was the right decision...", 1);
@@ -404,6 +381,7 @@ namespace DungeonExplorer
                 Console.Clear();
                 Console.WriteLine("You bested the dungeons and defeated the Minotaur.\n\nYou win!");
                 Thread.Sleep(2000);
+                // Statistics are displayed once the player presses enter as prompted:
                 Console.WriteLine("Type anything and click ENTER to view your statistics");
                 Console.ReadLine();
                 Console.Clear();
@@ -504,6 +482,7 @@ namespace DungeonExplorer
                         Console.Clear();
                     }
                 }
+                // Attacks monster:
                 else if (input == "attack")
                 {
                     if (monsters.Count == 0)
@@ -522,6 +501,7 @@ namespace DungeonExplorer
                         }
                     }
                 }
+                // Displays the inventory:
                 else if (input == "inv")
                 {
                     Console.Clear();
@@ -540,7 +520,7 @@ namespace DungeonExplorer
                         }
                         else
                         {
-                            // OrderBy LINQ is used here to sort the weapons in the inventory by weakest to strongest:
+                            // OrderBy LINQ is used here to sort the weapons in the inventory by strongest to weakest:
                             var sortedWeapons = weapons.OrderByDescending(weapon => weapon.GetAttackDmg()).ToList();
 
                             foreach (var weapon in sortedWeapons)
@@ -550,6 +530,7 @@ namespace DungeonExplorer
                             Console.Write("\n========================================================\n\n");
                         }
                     }
+                    // Shows potions in the inventory:
                     else if (choice == "potions")
                     {
                         Console.Clear();
@@ -563,12 +544,12 @@ namespace DungeonExplorer
                         {
                             foreach (var potion in potions)
                             {
-                                //Console.WriteLine($"- {potion.Name}: {potion.HealingFactor} HP");
                                 Console.WriteLine($"- {potion.GetSummary()}");
                             }
                             Console.Write("\n========================================================\n\n");
                         }
                     }
+                    // Shows miscellaneous items in the inventory:
                     else if (choice == "misc")
                     {
                         Console.Clear();
@@ -588,6 +569,7 @@ namespace DungeonExplorer
                     }
 
                 }
+                // Collects items in the room:
                 else if (input == "pick")
                 {
                     var currentItems = player.CurrentRoom.GetItems();
@@ -618,6 +600,7 @@ namespace DungeonExplorer
                     }
 
                 }
+                // Heals the player if they have potions in their inventory:
                 else if (input == "heal")
                 {
                     var currentItems = player.GetInventory();
@@ -682,7 +665,7 @@ namespace DungeonExplorer
                         }
                     }
                 }
-
+                // Quits the game:
                 if (input == "quit")
                 {
                     Console.WriteLine(Statistics.GameOverStats());

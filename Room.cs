@@ -14,6 +14,7 @@ namespace DungeonExplorer
         public bool EventTriggered { get; set; }
         public bool Locked { get; set; }
 
+        // Every room has their own unique name and description:
         public Room(string name, string description)
         {
             Name = name;

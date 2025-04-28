@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace DungeonExplorer
 {
+    // Inherits from monster:
     public class Skeleton : Monster
     {
+        // All monsters have unique values. Being minimum HP, maximum HP, minimum attack damage, and maximum attack damage. This allows for randomness:
         public Skeleton() : base("Skeleton", 30, 45, 6, 10)
         {
             GoesFirst = random.Next(4) == 1;

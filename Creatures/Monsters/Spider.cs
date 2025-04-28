@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace DungeonExplorer
 {
+    // Inherits from monster:
     public class Spider : Monster
     {
+        // All monsters have unique values. Being minimum HP, maximum HP, minimum attack damage, and maximum attack damage. This allows for randomness:
         public Spider() : base("Spider", 60, 80, 6, 12)
         {
             GoesFirst = random.Next(3) == 1;

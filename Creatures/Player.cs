@@ -97,15 +97,18 @@ namespace DungeonExplorer
             return WeaponsSorted.ToList();
         }
 
+        // Adds potions to inventory:
         public void AddPotion(Potion potion)
         {
             Inventory.Add(potion);
         }
+        // Adds miscellaneous to inventory:
         public void AddMisc(Misc misc)
         {
             Inventory.Add(misc);
         }
 
+        // Inventory is stored as a list:
         public List<Item> GetInventory()
         {
             return Inventory;
@@ -148,16 +151,19 @@ namespace DungeonExplorer
             return Inventory.OfType<Misc>().ToList();
         }
 
+        // Heals the player by consuming their potion/s:
         public void drinkPotion(Potion potion)
         {
             Health += potion.HealingFactor;
         }
 
+        // Uses miscellaneous items (the key for the boss room):
         public void useMisc(Misc misc)
         {
             Inventory.Remove(misc);
         }
 
+        // Sets the player in a room:
         public void SetCurrentRoom(Room room)
         {
             CurrentRoom = room;
@@ -174,16 +180,19 @@ namespace DungeonExplorer
             }
             return strongestWeapon;
         }
-
+        
+        // Player combat below:
         public void Combat(List<Monster> monsters, Player player)
         {
             Random random = new Random();
             Console.Clear();
             Monster monster = monsters[0];
 
+            // Shows the player's name vs the monster's name:
             Console.WriteLine($"{player.Name} vs the {monster.Name}");
             int roundNum = 1;
 
+            // Displays the round number:
             while (player.IsAlive() && monster.IsAlive())
             {
                 Console.WriteLine("- - - - - - - - - -");
@@ -191,6 +200,7 @@ namespace DungeonExplorer
 
                 bool isCritHit = random.Next(100) < 10;
 
+                // The monster has a random chance of attacking before the player:
                 if (monster.GoesFirst)
                 {
                     Console.WriteLine($"{monster.Name} attacks {player.Name} for {monster.AttackDmg} DMG.");
@@ -211,6 +221,7 @@ namespace DungeonExplorer
                         Environment.Exit(0);
                     }
 
+                    // This uses the player's strongest weapon by default, as well as allowing for critical hits:
                     int playerDmg = player.GetStrongestWeapon().GetAttackDmg();
                     if (isCritHit)
                     {
@@ -223,6 +234,7 @@ namespace DungeonExplorer
                     monster.TakeDamage(playerDmg);
                     Statistics.DoneDamage(playerDmg);
 
+                    // If the monster is not alive:
                     if (!monster.IsAlive())
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -239,6 +251,7 @@ namespace DungeonExplorer
                 
                 else
                 {
+                    // Uses the strongest weapon by default for attacking monsters:
                     int playerDmg = player.GetStrongestWeapon().GetAttackDmg();
                     if (isCritHit)
                     {
@@ -251,6 +264,7 @@ namespace DungeonExplorer
                     monster.TakeDamage(playerDmg);
                     Statistics.DoneDamage(playerDmg);
 
+                    // If the monster is not alive, it is cleared from the room and the player collects its soul:
                     if (!monster.IsAlive())
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -265,6 +279,7 @@ namespace DungeonExplorer
                     player.TakeDamage(monster.AttackDmg);
                     Statistics.TakenDamage(monster.AttackDmg);
 
+                    // Game over screen and statistics if the player is not alive:
                     if (!player.IsAlive())
                     {
                         Console.ForegroundColor = ConsoleColor.DarkRed;
