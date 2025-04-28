@@ -144,8 +144,9 @@ namespace DungeonExplorer
             Random random = new Random();
             foreach (var monster in monsters)
             {
-                int roomNum = random.Next(Rooms.Count);
-                Rooms[roomNum].AddMonster(monster);
+                List<Room> availableRooms = Rooms.Where(room => room != treasury && room != bossRoom).ToList();
+                int roomNum = random.Next(availableRooms.Count);
+                availableRooms[roomNum].AddMonster(monster);
             }
 
             // These are the weapons and the potions. They all have their own name, description and number for how much damage they deal:
@@ -370,37 +371,43 @@ namespace DungeonExplorer
 
         private void handleKeyEvent(Room room)
         {
-            if (bossRoom.Locked)
-            {
-                bossRoom.UnlockBossDoor(player.GetInventory());
-            }
-            if (!bossRoom.Locked)
-            {
-                bossRoom.EventTriggered = true;
-                player.SetCurrentRoom(bossRoom);
-                Console.Clear();
-                PrintDelay("...", 1000);
-                PrintDelay($"{player.Name} presents the mysterious key to the door...", 1);
-                PrintDelay("...", 1000);
-                PrintDelay("The door swings open, and a strong force pulls you inside...", 1);
-                Thread.Sleep(1000);
-                Console.Clear();
-                Console.ForegroundColor = ConsoleColor.Red;
-                PrintDelay("The room shakes as a loud roar erupts from the creature's mouth.", 1);
-                Thread.Sleep(1000);
-                PrintDelay("You question if this was the right decision...", 1);
-                Thread.Sleep(1000);
+            room.EventTriggered = true;
+            Console.Clear();
+            PrintDelay("...", 1000);
+            PrintDelay($"{player.Name} presents the mysterious key to the door...", 1);
+            PrintDelay("...", 1000);
+            PrintDelay("The door swings open, and a strong force pulls you inside...", 1);
+            Thread.Sleep(1000);
 
-                var monsters = player.CurrentRoom.Monsters;
+            // Move player to boss room!
+            player.SetCurrentRoom(bossRoom);
 
-                player.Combat(monsters, player);
-            }
-            }
+            // Ensure bossRoom has only the Minotaur
+            bossRoom.Monsters.Clear();
+            bossRoom.AddMonster(new Minotaur());
+
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            PrintDelay("The room shakes as a loud roar erupts from the creature's mouth.", 1);
+            Thread.Sleep(1000);
+            PrintDelay("You question if this was the right decision...", 1);
+            Thread.Sleep(1000);
+
+            var monsters = player.CurrentRoom.Monsters;
+
+            PrintMonsters(monsters);
+
+            player.Combat(monsters, player);
+        }
+
 
 
         public void Start()
         {
-
+            Weapon bow = new Weapon("Bow", "A sturdy longbow", 24);
+            player.AddWeapon(bow);
+            Misc key = new Misc("Mysterious key", "This old key seems similar to a lock on a door you passed by earlier...");
+            player.AddMisc(key);
             // This text is printed at the beginning of the game. The program asks the player for their name:
             PrintDelay("Explorer, before you attempt to explore the dungeons, you must tell me your name: ", 1);
             string userName = Console.ReadLine();
@@ -648,7 +655,7 @@ namespace DungeonExplorer
                     }
                         Console.WriteLine("=================================");
                         string useInput = Console.ReadLine();
-                    if (useInput == "key" && player.CurrentRoom.Name == "Ruins")
+                    if (useInput == "key" && player.CurrentRoom.Name == "a Ruin")
                     {
                         if (player.GetWeapons().Count == 0)
                         {
