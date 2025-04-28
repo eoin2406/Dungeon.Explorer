@@ -18,13 +18,13 @@ namespace DungeonExplorer
         {
             base.Collect();
             Console.ForegroundColor = ConsoleColor.DarkCyan;
-            this.PrintDelay("> The Mimic shatters to pieces.\nIt drops an old key, and the brave explorer absorbs its cursed soul...\n", 1);
+            this.PrintDelay("> The Mimic shatters to pieces.\nIt drops an old key, and the brave explorer absorbs its cursed soul...\n\nMaybe this key can be used for the door in the ruins!", 1);
             Console.ForegroundColor = ConsoleColor.White;
             // The mysterious key to the boss door is dropped upon the mimic's defeat:
 
             if (player != null)
             {
-                Misc key = new Misc("Mysterious key", "This old key seems similar to a lock on a door you passed by earlier...");
+                Misc key = new Misc("Key", "This old key seems similar to a lock on a door you passed by earlier...");
                 player.AddMisc(key);
             }
             else
@@ -40,7 +40,7 @@ namespace DungeonExplorer
         }
         public override string GetMonsterNoise()
         {
-            return ("You notice a large chest in the centre of the room.\nIts wooden surface shines in the dim light, but something seems off.\n\nThe large chest calls you closer...");
+            return ("You notice a large chest in the centre of the room.\nIts wooden surface shines in the dim light, but something seems off.\n\nThe large chest calls you closer...\n> (Try attack)");
         }
     }
 }

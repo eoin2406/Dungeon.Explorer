@@ -200,11 +200,13 @@ namespace DungeonExplorer
                     if (!player.IsAlive())
                     {
                         Console.ForegroundColor = ConsoleColor.DarkRed;
-                        Console.WriteLine($"{player.Name} was slain by {monster.Name}");
-                        Console.WriteLine("\nYou lose!");
+                        Console.WriteLine($"\n{player.Name} was slain by {monster.Name}");
+                        Console.WriteLine("\nYou lose!\n");
                         Console.ForegroundColor = ConsoleColor.White;
                         Thread.Sleep(2000);
+                        Console.WriteLine("Game Over!\nType anything and click ENTER to view your statistics");
                         Console.ReadLine();
+                        Console.Clear();
                         Console.WriteLine(Statistics.GameOverStats());
                         Environment.Exit(0);
                     }
@@ -224,7 +226,7 @@ namespace DungeonExplorer
                     if (!monster.IsAlive())
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"{monster.Name} was defeated!");
+                        Console.WriteLine($"\n{monster.Name} was defeated!");
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.ForegroundColor = ConsoleColor.DarkCyan;
                         if (monster is ICollectable collectableMonster)
@@ -252,7 +254,7 @@ namespace DungeonExplorer
                     if (!monster.IsAlive())
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"{monster.Name} was defeated!");
+                        Console.WriteLine($"\n{monster.Name} was defeated!");
                         Console.ForegroundColor = ConsoleColor.White;
                         monster.Collect();
                         player.CurrentRoom.delMonster(monster);
@@ -266,7 +268,7 @@ namespace DungeonExplorer
                     if (!player.IsAlive())
                     {
                         Console.ForegroundColor = ConsoleColor.DarkRed;
-                        PrintDelay($"{player.Name} was slain by {monster.Name}", 2);
+                        PrintDelay($"\n{player.Name} was slain by {monster.Name}", 2);
                         Console.ForegroundColor = ConsoleColor.White;
                         Thread.Sleep(2000);
                         Console.WriteLine("Game Over!\nType anything and click ENTER to view your statistics");

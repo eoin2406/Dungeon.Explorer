@@ -43,7 +43,7 @@ namespace DungeonExplorer
         public Game()
         {
             Rooms = new List<Room>();
-            player = new Player("Name", 500);
+            player = new Player("Name", 150);
             InitialiseRooms();
             player.CurrentRoom = Rooms[0];
 
@@ -85,7 +85,7 @@ namespace DungeonExplorer
             Room cellar = new Room("a Cellar", "A damp, musty smell floods the room. The only the light to guide you comes from the ladder hatch above.");
             Room walls = new Room("the Crushing walls Corridor", "The walls are open. This room is now safe!");
             Room altar = new Room("an Altar", "The moonlight illuminates the large stone altar. You feel it calling you...");
-            ruins = new Room("a Ruin", "Remains of a place once magnificent lay sprawled across the hard ground. A grand spruce door stands completely intact.\nWhere could it lead?");
+            ruins = new Room("a Ruin", "Remains of a place once magnificent lay sprawled across the hard ground. A grand spruce door stands completely intact.\n\n>>> The door requires a key to open, perhaps it is hidden somewhere in the dungeon...\n\n>>> (Try \"use\" if you find the key!)");
             bossRoom = new Room("a Hidden Lair", "Add boss here + functionality");
 
             // Add navigation. W = West. S = South. N = North. E = East:
@@ -144,21 +144,21 @@ namespace DungeonExplorer
             Random random = new Random();
             foreach (var monster in monsters)
             {
-                List<Room> availableRooms = Rooms.Where(room => room != treasury && room != bossRoom).ToList();
+                List<Room> availableRooms = Rooms.Where(room => room != treasury && room != bossRoom && room != walls).ToList();
                 int roomNum = random.Next(availableRooms.Count);
                 availableRooms[roomNum].AddMonster(monster);
             }
 
             // These are the weapons and the potions. They all have their own name, description and number for how much damage they deal:
-            Weapon sword = new Weapon("Broadsword", "A plain broadsword", 16);
-            Weapon club = new Weapon("Club", "An old club", 17);
-            Weapon stick = new Weapon("Stick", "Just a stick", 7);
+            Weapon sword = new Weapon("Broadsword", "A plain broadsword", 18);
+            Weapon club = new Weapon("Club", "An old club", 20);
+            Weapon stick = new Weapon("Stick", "Just a stick", 10);
             Weapon bow = new Weapon("Bow", "A sturdy longbow", 24);
-            Weapon longsword = new Weapon("Longsword", "A mighty longsword", 25);
+            Weapon longsword = new Weapon("Longsword", "A mighty longsword", 27);
 
-            Potion small = new Potion("Lesser Healing", "Heals 5 HP", 5);
-            Potion medium = new Potion("Medium Healing", "Heals 10 HP", 10);
-            Potion large = new Potion("Greater Healing", "Heals 20 HP", 20);
+            Potion small = new Potion("Lesser Healing", "Heals 15 HP", 15);
+            Potion medium = new Potion("Medium Healing", "Heals 30 HP", 30);
+            Potion large = new Potion("Greater Healing", "Heals 40 HP", 40);
 
             cave.SetItems(new List<Item>
             {
@@ -179,7 +179,7 @@ namespace DungeonExplorer
                 medium
             });
             // Player begins with fists. This is so they can attack monsters without collecting a weapon - preventing any possible errors:
-                Weapon fists = new Weapon("Fists", "Your fists", 1);
+                Weapon fists = new Weapon("Fists", "Your fists", 5);
             player.AddWeapon(fists);
         }
         // This prints the monsters found in the current room:
@@ -391,23 +391,32 @@ namespace DungeonExplorer
             PrintDelay("The room shakes as a loud roar erupts from the creature's mouth.", 1);
             Thread.Sleep(1000);
             PrintDelay("You question if this was the right decision...", 1);
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
 
             var monsters = player.CurrentRoom.Monsters;
 
             PrintMonsters(monsters);
 
+            // If the player beats the boss room, this is displayed:
             player.Combat(monsters, player);
+            if (player.IsAlive())
+            {
+                Console.Clear();
+                Console.WriteLine("You bested the dungeons and defeated the Minotaur.\n\nYou win!");
+                Thread.Sleep(2000);
+                Console.WriteLine("Type anything and click ENTER to view your statistics");
+                Console.ReadLine();
+                Console.Clear();
+                Console.WriteLine(Statistics.GameOverStats());
+                
+                Environment.Exit(0);
+            }
         }
 
 
 
         public void Start()
         {
-            Weapon bow = new Weapon("Bow", "A sturdy longbow", 24);
-            player.AddWeapon(bow);
-            Misc key = new Misc("Mysterious key", "This old key seems similar to a lock on a door you passed by earlier...");
-            player.AddMisc(key);
             // This text is printed at the beginning of the game. The program asks the player for their name:
             PrintDelay("Explorer, before you attempt to explore the dungeons, you must tell me your name: ", 1);
             string userName = Console.ReadLine();

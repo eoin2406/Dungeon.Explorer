@@ -8,7 +8,7 @@ namespace DungeonExplorer
 {
     public class Hound : Monster
     {
-        public Hound() : base("Hound", 30, 40, 4, 10)
+        public Hound() : base("Hound", 50, 60, 4, 10)
         {
             GoesFirst = random.Next(4) == 1;
         }
