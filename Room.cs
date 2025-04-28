@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DungeonExplorer
 {
@@ -11,6 +12,7 @@ namespace DungeonExplorer
         public List<Monster> Monsters {get; set;}
         public List<Item> Items {get; set;}
         public bool EventTriggered {get; set;}
+        public bool Locked { get; set;}
 
         public Room(string name, string description)
         {
@@ -20,6 +22,7 @@ namespace DungeonExplorer
             Monsters = new List<Monster>();
             Items = new List<Item>();
             EventTriggered = false;
+            Locked = true;
         }
 
         public void SetDescription(string description)
@@ -58,6 +61,14 @@ namespace DungeonExplorer
         public List<Item> GetItems()
         {
             return Items;
+        }
+        public void UnlockBossDoor(List<Item> inventory)
+        {
+            if (inventory.Any(i => i is MysteriousKey));
+            {
+                Locked = false;
+                Console.WriteLine("The Boss Room opens!");
+            }
         }
     }
 }

@@ -80,7 +80,7 @@ namespace DungeonExplorer
             Room hall = new Room("the Great Hall", "The hall is faintly lit by candlelight. You imagine how lively this place must have been in the past.");
             Room chamber = new Room("a Chamber", "Everything feels so still... as if time itself has paused.");
             Room mirrors = new Room("the Room of Mirrors", "You enter a room filled with mirrors. You begin to feel very disoriented.");
-            Room treasury = new Room("the Treasury", "Precious gems, ancient relics are everywhere. In the centre of the room, an encased sword rests on a pedastal.");
+            Room treasury = new Room("the Treasury", "Precious gems, ancient relics are everywhere. In the centre of the room, a large chest rests on a pedestal.");
             Room library = new Room("the Library", "You feel a strange sensation upon entering the room. The large bookshelves tower over you.");
             Room cellar = new Room("a Cellar", "A damp, musty smell floods the room. The only the light to guide you comes from the ladder hatch above.");
             Room walls = new Room("the Crushing walls Corridor", "The walls are open. This room is now safe!");
@@ -123,10 +123,13 @@ namespace DungeonExplorer
             Rooms.Add(ruins);
             Rooms.Add(bossRoom);
 
-            treasury.AddMonster(new Mimic());
+            // Only the Mimic spawns in the treasury room. The Mimic drops the key to the boss room:
+            Mimic mimic = new Mimic(player);
+            treasury.AddMonster(mimic);
+
             bossRoom.AddMonster(new Minotaur());
 
-            // Randomly assign a room to each monster:
+            // Randomly assign a room to each monster (apart from the mimic and minotaur as they are needed for the key for the boss door and boss room:
             List<Monster> monsters = new List<Monster>
             {
                 new Dragon(),
@@ -134,9 +137,7 @@ namespace DungeonExplorer
                 new Goblin(),
                 new Vampire(),
                 new Skeleton(),
-                new Mimic(),
                 new Hound(),
-
             };
 
             Random random = new Random();
@@ -175,10 +176,6 @@ namespace DungeonExplorer
                 bow,
                 medium
             });
-
-            Misc key = new Misc("Mysterious Key", "I wonder what this is used for?");
-            player.AddMisc(key);
-
             // Player begins with fists. This is so they can attack monsters without collecting a weapon - preventing any possible errors:
                 Weapon fists = new Weapon("Fists", "Your fists", 1);
             player.AddWeapon(fists);
@@ -235,7 +232,6 @@ namespace DungeonExplorer
                 Console.WriteLine($"> You can see a potion of {potion.Name}.");
             }
         }
-
         // This prints the exits that can be found within the current room:
         private void PrintExits(Dictionary<string, Room> exits)
         {
@@ -366,31 +362,37 @@ namespace DungeonExplorer
             room.EventTriggered = true;
         }
 
-        private void handleMimicEvent(Room room)
-        {
-            Console.WriteLine("Test/Placholder. TO DO!"); /////////////NEEEEEEEEEEEEEEEEEEEEDS WORK
-        }
+        //private void handleMimicEvent(Room room)
+        //{
+        //}
 
         private void handleKeyEvent(Room room)
         {
-            bossRoom.EventTriggered = true;
-            player.SetCurrentRoom(bossRoom);
-            Console.Clear();
-            PrintDelay("...", 1000);
-            PrintDelay($"{player.Name} presents the mysterious key to the door...", 1);
-            PrintDelay("...", 1000);
-            PrintDelay("The door swings open, and a strong force pulls you inside...", 1);
-            Thread.Sleep(1000);
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Red;
-            PrintDelay("The room shakes as a loud roar erupts from the creature's mouth.", 1);
-            Thread.Sleep(1000);
-            PrintDelay("You question if this was the right decision...", 1);
-            Thread.Sleep(1000);
+            if (bossRoom.Locked && player.GetInventory().Any(i => i is MysteriousKey))
+            {
+                bossRoom.UnlockBossDoor(player.GetInventory());
+            }
+            if (!bossRoom.Locked)
+            {
+                bossRoom.EventTriggered = true;
+                player.SetCurrentRoom(bossRoom);
+                Console.Clear();
+                PrintDelay("...", 1000);
+                PrintDelay($"{player.Name} presents the mysterious key to the door...", 1);
+                PrintDelay("...", 1000);
+                PrintDelay("The door swings open, and a strong force pulls you inside...", 1);
+                Thread.Sleep(1000);
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                PrintDelay("The room shakes as a loud roar erupts from the creature's mouth.", 1);
+                Thread.Sleep(1000);
+                PrintDelay("You question if this was the right decision...", 1);
+                Thread.Sleep(1000);
 
-            var monsters = player.CurrentRoom.Monsters;
+                var monsters = player.CurrentRoom.Monsters;
 
-            player.Combat(monsters, player);
+                player.Combat(monsters, player);
+            }
         }
 
 
@@ -430,18 +432,26 @@ namespace DungeonExplorer
                     HandleWallEvent(player.CurrentRoom);
                 }
 
-                if (player.CurrentRoom.Name == "the Treasury" && !player.CurrentRoom.EventTriggered)
+                //if (player.CurrentRoom.Name == "the Treasury" && !player.CurrentRoom.EventTriggered)
+                //{
+                //    handleMimicEvent(player.CurrentRoom);
+                //}
+                if (player.CurrentRoom.Name == "a Hidden Lair")
                 {
-                    handleMimicEvent(player.CurrentRoom);
-                }
-                if (player.CurrentRoom.Name == "a Hidden Lair" && bossRoom.EventTriggered == false)
-                {
-                    PrintDelay($"{player.Name} attempts to force the door open, to no avail.", 1);
-                    PrintDelay("There must be some other way to get through.", 1);
-                    Thread.Sleep(2000);
-                    Console.Clear();
-                    player.SetCurrentRoom(ruins);
-                }
+                    if (bossRoom.EventTriggered == false)
+                    {
+                        if (player.GetInventory().Any(i => i is MysteriousKey))
+                        {
+                            handleKeyEvent(player.CurrentRoom);
+                        }
+                        else
+                        {
+                            PrintDelay($"{player.Name} attempts to force the door open, to no avail.", 1);
+                            PrintDelay("There must be some other way to get through.", 1);
+                            Thread.Sleep(2000);
+                            Console.Clear();
+                            player.SetCurrentRoom(ruins);
+                        }
 
                 // Display player name, HP, current room, any monsters found within the room, as well as any items:
                 Console.Write($"{player.Name} ");
