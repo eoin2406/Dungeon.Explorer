@@ -67,18 +67,18 @@ public class Statistics
 		// Overall game statistics are displayed to the user. This includes the damage dealt, taken, amount of attacks, average damage, number of rooms and collected monster souls:
 		if (ListNum(DamageTaken) > 0 && ListNum(DamageDone) > 0)
 		{
-			statistics = ($"You dealt {ListSummary(DamageDone)} damage.\nYou attacked {ListNum(DamageDone)} times, and your average damage per attack was: {ListAverage(DamageDone)}. \n\n") +
+			statistics = ($"Statistics:\n\nYou dealt {ListSummary(DamageDone)} damage.\nYou attacked {ListNum(DamageDone)} times, and your average damage per attack was: {ListAverage(DamageDone)}. \n\n") +
 			($"You took {ListSummary(DamageTaken)} damage.\nYou were attacked {ListNum(DamageTaken)} times, and the average damage to you per attack was: {ListAverage(DamageTaken)}. \n\n") +
-			($"You explored {ExploredRooms} rooms.\n");
+			($"You explored {ExploredRooms} rooms.\n\n");
 		}
 		else
 		{
-			statistics = ($"You dealt {ListSummary(DamageDone)} damage.\nYou attacked {ListNum(DamageDone)} times. \n\n") +
+			statistics = ($"Statistics:\n\nYou dealt {ListSummary(DamageDone)} damage.\nYou attacked {ListNum(DamageDone)} times. \n\n") +
 			($"You took {ListSummary(DamageTaken)} damage.\nYou were attacked {ListNum(DamageTaken)} times. \n\n") +
 			($"You explored {ExploredRooms} rooms.\n\n");
 		}
 		// "Thanks for playing" is shown as it is an end game screen when these statistics are displayed:
-		statistics += ($"\nYou collected {MonstersCollected} souls from slain foes.\n\nThank you for playing!");
+		statistics += ($"You collected {MonstersCollected} souls from slain foes.\n\nThank you for playing!");
        
 		return statistics;
 	}

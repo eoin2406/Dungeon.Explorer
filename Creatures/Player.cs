@@ -269,7 +269,7 @@ namespace DungeonExplorer
                         PrintDelay($"{player.Name} was slain by {monster.Name}", 2);
                         Console.ForegroundColor = ConsoleColor.White;
                         Thread.Sleep(2000);
-                        Console.WriteLine("Game Over!\nPress any key to view your statistics...");
+                        Console.WriteLine("Game Over!\nType anything and click ENTER to view your statistics");
                         Console.ReadLine();
                         Console.Clear();
                         Console.WriteLine(Statistics.GameOverStats());

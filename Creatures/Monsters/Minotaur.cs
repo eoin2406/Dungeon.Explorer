@@ -17,7 +17,7 @@ namespace DungeonExplorer
         {
             base.Collect();
             Console.ForegroundColor = ConsoleColor.DarkCyan;
-            this.PrintDelay("The Minotaur has fallen. Its cursed soul absorbed by the brave explorer...\n", 1);
+            this.PrintDelay("> The Minotaur collapses to the ground.\n The almighty soul was absorbed by the brave explorer!\n", 1);
             Console.ForegroundColor = ConsoleColor.White;
             System.Threading.Thread.Sleep(3000);
             Console.Clear();

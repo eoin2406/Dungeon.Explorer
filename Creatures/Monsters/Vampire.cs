@@ -16,7 +16,7 @@ namespace DungeonExplorer
         {
             base.Collect();
             Console.ForegroundColor = ConsoleColor.DarkCyan;
-            this.PrintDelay("The Vampire has fallen. Its cursed soul absorbed by the brave explorer...\n", 1);
+            this.PrintDelay("> The Vampire falls down.\nIts rotten soul is absorbed by the brave explorer...\n", 1);
             Console.ForegroundColor = ConsoleColor.White;
             System.Threading.Thread.Sleep(3000);
             Console.Clear();

@@ -48,7 +48,7 @@
     <Compile Include="Creatures\Monsters\Goblin.cs" />
     <Compile Include="Creatures\Monsters\Hound.cs" />
     <Compile Include="ICollectable.cs" />
-    <Compile Include="Creatures\Monsters\Monster.cs" />
+    <Compile Include="Creatures\Monster.cs" />
     <Compile Include="Creatures\Player.cs" />
     <Compile Include="Creatures\Monsters\Mimic.cs" />
     <Compile Include="Creatures\Monsters\Minotaur.cs" />

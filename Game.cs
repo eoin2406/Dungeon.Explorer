@@ -273,7 +273,7 @@ namespace DungeonExplorer
             Console.ForegroundColor = ConsoleColor.White;
             Console.ReadLine();
             Console.Clear();
-            Console.WriteLine("Type alphabet (no spaces, all lowercase)");
+            Console.WriteLine("Type the alphabet (lowercase)");
 
             bool isTimeUp = false;
             DateTime startTime = DateTime.Now;
@@ -285,46 +285,72 @@ namespace DungeonExplorer
             // This will allow the user's player input to be stored whilst they are typing:
             string userInput = "";
 
+            int timerLineY = Console.CursorTop;
+            int typingLineY = timerLineY + 1;
+            // This will handle the timer, once the quicktime event is over, the timer will disappear:
+            bool timerCompleted = false;
+
             Task.Run(() =>
             {
-                while (DateTime.Now < endTime)
+                while (DateTime.Now < endTime && !isTimeUp)
                 {
                     TimeSpan timeLeft = endTime - DateTime.Now;
+
+                    Console.SetCursorPosition(0, timerLineY);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                    Console.SetCursorPosition(0, timerLineY);
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
                     Console.WriteLine($"The walls close in: {timeLeft.Seconds} seconds...");
+                    Console.ForegroundColor = ConsoleColor.White;
                     // Using Thread.Sleep, I can make the timer update every second:
                     Thread.Sleep(1000);
-                }
-            });
 
-            while (DateTime.Now < endTime)
+                    if (timeLeft.TotalSeconds <= 0 || isTimeUp) break;
+                }
+                // Once the time is up, the timer will be flagged as completed:
+                timerCompleted = true;
+            });
+            while (DateTime.Now < endTime && !isTimeUp)
             {
                 if(Console.KeyAvailable)
                 {
                     var key = Console.ReadKey(intercept: true).KeyChar;
 
+                    // If the key entered is a letter, it will be added to the player's input on-screen:
                     if (char.IsLetter(key))
                     {
                         userInput += key.ToString().ToLower();
-                        Console.Write(key.ToString().ToLower());
+                        Console.SetCursorPosition(0, typingLineY);
+                        Console.Write(new string(' ', Console.WindowWidth));
+                        Console.SetCursorPosition(0, typingLineY);
+                        Console.Write(userInput);
+                    }
+                    else if (key == 8 && userInput.Length > 0)
+                    {
+                        userInput = userInput.Substring(0, userInput.Length - 1);
 
-                        if (userInput == correctInput)
-                        {
-                            isTimeUp = true;
-                            break;
-                        }    
+                        Console.SetCursorPosition(0, typingLineY);
+                        Console.Write(new string(' ', Console.WindowWidth));
+                        Console.SetCursorPosition (0, typingLineY);
+                        Console.Write(userInput);
+                    }
+                    if (userInput == correctInput)
+                    {
+                        isTimeUp = true;
+                        break;
                     }    
                 }
             }
-
             // If the player fails the quicktime event:
             if (!isTimeUp || userInput != correctInput)
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
-                PrintDelay($"The walls close in and the brave {player.Name} is crushed...", 1);
                 Console.Clear();
-                Thread.Sleep(2000);
+                PrintDelay($"The walls close in and the brave adventurer {player.Name} is crushed...", 1);
+                Thread.Sleep(3000);
+                Console.Clear();
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("Game Over!\nPress any key to view your statistics...");
+                Console.WriteLine("Game Over!\n\nType anything and click ENTER to view your statistics");
                 Console.ReadLine();
                 Console.Clear();
                 Console.WriteLine(Statistics.GameOverStats());

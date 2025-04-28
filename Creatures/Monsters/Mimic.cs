@@ -16,7 +16,7 @@ namespace DungeonExplorer
         {
             base.Collect();
             Console.ForegroundColor = ConsoleColor.DarkCyan;
-            this.PrintDelay("The Mimic has fallen. Its cursed soul absorbed by the brave explorer...\n", 1);
+            this.PrintDelay("> The Mimic shatters to pieces.\nAfter collecting the key, the brave explorer absorbs its cursed soul...\n", 1);
             Console.ForegroundColor = ConsoleColor.White;
             System.Threading.Thread.Sleep(3000);
             Console.Clear();
