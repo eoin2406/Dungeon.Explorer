@@ -8,7 +8,7 @@ namespace DungeonExplorer
 {
     public class Spider : Monster
     {
-        public Spider() : base("Spider", 60, 80, 5, 10)
+        public Spider() : base("Spider", 60, 80, 6, 12)
         {
             GoesFirst = random.Next(3) == 1;
         }

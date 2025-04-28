@@ -85,7 +85,7 @@ namespace DungeonExplorer
             Room cellar = new Room("a Cellar", "A damp, musty smell floods the room. The only the light to guide you comes from the ladder hatch above.");
             Room walls = new Room("the Crushing walls Corridor", "The walls are open. This room is now safe!");
             Room altar = new Room("an Altar", "The moonlight illuminates the large stone altar. You feel it calling you...");
-            ruins = new Room("a Ruin", "Remains of a place once magnificent lay sprawled across the hard ground. A grand spruce door stands completely intact.\n\n>>> The door requires a key to open, perhaps it is hidden somewhere in the dungeon...\n\n>>> (Try \"use\" if you find the key!)");
+            ruins = new Room("a Ruin", "Remains of a place once magnificent lay sprawled across the hard ground. A grand spruce door stands completely intact.\n\n>>> The door requires a key to open, perhaps it is hidden somewhere in the dungeon...\n>>> (Try \"use\" if you find the key!)");
             bossRoom = new Room("a Hidden Lair", "Add boss here + functionality");
 
             // Add navigation. W = West. S = South. N = North. E = East:
@@ -156,9 +156,9 @@ namespace DungeonExplorer
             Weapon bow = new Weapon("Bow", "A sturdy longbow", 24);
             Weapon longsword = new Weapon("Longsword", "A mighty longsword", 27);
 
-            Potion small = new Potion("Lesser Healing", "Heals 15 HP", 15);
-            Potion medium = new Potion("Medium Healing", "Heals 30 HP", 30);
-            Potion large = new Potion("Greater Healing", "Heals 40 HP", 40);
+            Potion small = new Potion("Lesser Healing", "Heals 25 HP", 25);
+            Potion medium = new Potion("Medium Healing", "Heals 40 HP", 40);
+            Potion large = new Potion("Greater Healing", "Heals 60 HP", 60);
 
             cave.SetItems(new List<Item>
             {
@@ -516,6 +516,10 @@ namespace DungeonExplorer
                     else
                     {
                         player.Combat(monsters, player);
+                        if (player.IsAlive())
+                        {
+                            player.CurrentRoom.Monsters.Clear();
+                        }
                     }
                 }
                 else if (input == "inv")
@@ -537,7 +541,7 @@ namespace DungeonExplorer
                         else
                         {
                             // OrderBy LINQ is used here to sort the weapons in the inventory by weakest to strongest:
-                            var sortedWeapons = weapons.OrderBy(weapon => weapon.GetAttackDmg()).ToList();
+                            var sortedWeapons = weapons.OrderByDescending(weapon => weapon.GetAttackDmg()).ToList();
 
                             foreach (var weapon in sortedWeapons)
                             {

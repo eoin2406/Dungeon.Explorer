@@ -9,7 +9,7 @@ namespace DungeonExplorer
 {
     public class Dragon : Monster
     {
-        public Dragon() : base("Dragon", 100, 120, 15, 25)
+        public Dragon() : base("Dragon", 80, 100, 15, 25)
         {
             GoesFirst = random.Next(2) == 1;
         }

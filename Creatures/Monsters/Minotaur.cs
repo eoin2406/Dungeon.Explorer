@@ -9,7 +9,7 @@ namespace DungeonExplorer
     // This is the boss monster. It cannot spawn in rooms, and can only be battled in the boss room. Its minimum and maximum health are the same every game:
     public class Minotaur : Monster
     {
-        public Minotaur() : base("Minotaur", 140, 160, 25, 35)
+        public Minotaur() : base("Minotaur", 120, 130, 20, 30)
         {
             GoesFirst = true;
         }

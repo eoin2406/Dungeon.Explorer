@@ -6,13 +6,13 @@ namespace DungeonExplorer
 {
     public class Room
     {
-        public string Name {get; set;}
-        public string Description {get; set;}
-        public Dictionary<string, Room> Exits {get; set;}
-        public List<Monster> Monsters {get; set;}
-        public List<Item> Items {get; set;}
-        public bool EventTriggered {get; set;}
-        public bool Locked { get; set;}
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public Dictionary<string, Room> Exits { get; set; }
+        public List<Monster> Monsters { get; set; }
+        public List<Item> Items { get; set; }
+        public bool EventTriggered { get; set; }
+        public bool Locked { get; set; }
 
         public Room(string name, string description)
         {
@@ -61,14 +61,6 @@ namespace DungeonExplorer
         public List<Item> GetItems()
         {
             return Items;
-        }
-        public void UnlockBossDoor(List<Item> inventory)
-        {
-            if (inventory.Any(i => i is MysteriousKey))
-            {
-                Locked = false;
-                Console.WriteLine("The Boss Room opens!");
-            }
         }
     }
 }
