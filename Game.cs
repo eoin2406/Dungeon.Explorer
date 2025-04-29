@@ -329,6 +329,7 @@ namespace DungeonExplorer
                 Console.WriteLine("Game Over!\n\nPress ENTER to view your statistics");
                 Console.ReadLine();
                 Console.Clear();
+                Console.ForegroundColor= ConsoleColor.White;
                 Console.WriteLine(Statistics.GameOverStats());
                 Environment.Exit(0);
             }
@@ -382,12 +383,15 @@ namespace DungeonExplorer
             if (player.IsAlive())
             {
                 Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("You bested the dungeons and defeated the Minotaur.\n\nYou win!\n");
                 Thread.Sleep(2000);
+                Console.ForegroundColor = ConsoleColor.Gray;
                 // Statistics are displayed once the player presses enter as prompted:
                 Console.WriteLine("Press ENTER to view your statistics");
                 Console.ReadLine();
                 Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine(Statistics.GameOverStats());
                 
                 Environment.Exit(0);
@@ -665,7 +669,9 @@ namespace DungeonExplorer
                         string useInput = Console.ReadLine();
                     if (useInput != "key")
                     {
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
                         Console.WriteLine("\nThat item does not exist in your inventory.");
+                        Console.ForegroundColor = ConsoleColor.Gray;
                         Thread.Sleep(2000);
                         Console.Clear();
                     }
@@ -677,7 +683,9 @@ namespace DungeonExplorer
                         }
                         else
                         {
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
                             Console.WriteLine("\nYou do not have that item to use.");
+                            Console.ForegroundColor = ConsoleColor.Gray;
                             Thread.Sleep(2000);
                             Console.Clear();
                         }
@@ -690,7 +698,9 @@ namespace DungeonExplorer
                     }   
                     if (useInput == "key" && player.CurrentRoom.Name != "a Ruin")
                     {
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
                         Console.WriteLine("\nYou cannot use a key...");
+                        Console.ForegroundColor = ConsoleColor.Gray;
                         Thread.Sleep(2000);
                         Console.Clear();
                     }

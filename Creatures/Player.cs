@@ -14,9 +14,9 @@ namespace DungeonExplorer
         public List<Item> Inventory { get; set; }
         public Player(string name, int health) : base(name, health)
         {
-            // Debug.Assert is used to check the player has a name
+            // Debug.Assert is used to check the player has a name:
             Debug.Assert(name != null, "Test failed: Player has no name.");
-            // Testing to see if the health is a positive integer
+            // Testing to see if the player health is a positive integer:
             Test.TestForPositiveInteger(health);
             Inventory = new List<Item>();
         }
@@ -85,7 +85,9 @@ namespace DungeonExplorer
             if (fists != null)
             {
                 Inventory.Remove(fists);
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
                 this.PrintDelay("A weapon! No need for my bare knuckles anymore.", 1);
+                Console.ForegroundColor = ConsoleColor.Gray;
                 Thread.Sleep(2000);
                 Console.Clear();
             }

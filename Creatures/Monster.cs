@@ -14,9 +14,9 @@ namespace DungeonExplorer
         public static Random random = new Random();
         public Monster(string name, int minHealth, int maxHealth, int minDmg, int maxDmg) : base(name, random.Next(minHealth, maxHealth))
         {
-            // Debug.Assert is used to check the player has a name
+            // Debug.Assert is used to check the player has a name:
             Debug.Assert(name != null, "Test failed: Player has no name.");
-            // Testing to see if the health is a positive integer
+            // Testing to see if the monster health is a positive integer:
             Test.TestForPositiveInteger(minHealth);
             AttackDmg = random.Next(minDmg, maxDmg);
         }
@@ -30,7 +30,7 @@ namespace DungeonExplorer
             Console.Write("\n");
         }
         // The Collect() method from the ICollectable interface is used here:
-        public virtual void Collect()
+        public override void Collect()
         {
             {
                 base.Collect();
