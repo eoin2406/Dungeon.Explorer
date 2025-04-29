@@ -203,7 +203,7 @@ namespace DungeonExplorer
 
                 bool isCritHit = random.Next(100) < 10;
 
-                // The monster has a random chance of attacking before the player:
+                // The monster has a random chance of attacking before the player does:
                 if (monster.GoesFirst)
                 {
                     Console.WriteLine($"{monster.Name} attacks {player.Name} for {monster.AttackDmg} DMG.");
