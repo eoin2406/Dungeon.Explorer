@@ -107,7 +107,7 @@ namespace DungeonExplorer
 
             bossRoom.AddMonster(new Minotaur());
 
-            // Randomly assigns a room to each monster (apart from the mimic and minotaur as they are needed for the key for the boss door and boss room:
+            // Randomly assigns a room to each monster (apart from the mimic and minotaur as they are needed for the key for the boss door and boss room):
             List<Monster> monsters = new List<Monster>
             {
                 new Dragon(),
