@@ -9,6 +9,7 @@ namespace DungeonExplorer
 {
     public class Player : Creature
     {
+        public bool playerHasKey = false;
         public Room CurrentRoom { get; set; }
         public List<Item> Inventory { get; set; }
         public Player(string name, int health) : base(name, health)

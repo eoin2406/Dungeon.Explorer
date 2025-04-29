@@ -665,15 +665,21 @@ namespace DungeonExplorer
                         string useInput = Console.ReadLine();
                     if (useInput == "key" && player.CurrentRoom.Name == "a Ruin")
                     {
+                        if (player.playerHasKey == true)
+                        {
+                            handleKeyEvent(player.CurrentRoom);
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nYou do not have that item to use.");
+                            Thread.Sleep(2000);
+                            Console.Clear();
+                        }
                         if (player.GetWeapons().Count == 0)
                         {
                             Console.ForegroundColor = ConsoleColor.DarkRed;
                             Console.WriteLine($"{player.Name} feels dreadfully unprepared. They step back and look elsewhere.");
                             Console.ForegroundColor = ConsoleColor.Gray;
-                        }
-                        else
-                        {
-                        handleKeyEvent(player.CurrentRoom);
                         }
                     }
                 }

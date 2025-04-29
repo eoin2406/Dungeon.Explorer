@@ -28,6 +28,7 @@ namespace DungeonExplorer
             {
                 Misc key = new Misc("Key", "This old key seems similar to a lock on a door you passed by earlier...");
                 player.AddMisc(key);
+                player.playerHasKey = true;
             }
             else
             {
