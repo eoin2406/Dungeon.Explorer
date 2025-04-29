@@ -42,7 +42,7 @@ public class Statistics
 		DamageTaken.Add(damage);
 		return;
 	}
-	// This is for collecting monster souls:
+	// This method is for collecting monster souls:
 	public static void CollectedMonster()
 		{
 			MonstersCollected++;
