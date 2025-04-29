@@ -217,6 +217,7 @@ namespace DungeonExplorer
                         Console.WriteLine("\nYou lose!\n");
                         Console.ForegroundColor = ConsoleColor.White;
                         Thread.Sleep(2000);
+                        Console.Clear();
                         Console.WriteLine("Game Over!\nType anything and click ENTER to view your statistics");
                         Console.ReadLine();
                         Console.Clear();
