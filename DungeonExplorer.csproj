@@ -43,16 +43,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Creatures\Monsters\Dragon.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="Monster.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="Creatures\Monsters\Goblin.cs" />
+    <Compile Include="Creatures\Monsters\Hound.cs" />
+    <Compile Include="Interfaces\ICollectable.cs" />
+    <Compile Include="Creatures\Monster.cs" />
+    <Compile Include="Creatures\Player.cs" />
+    <Compile Include="Creatures\Monsters\Mimic.cs" />
+    <Compile Include="Creatures\Monsters\Minotaur.cs" />
+    <Compile Include="Items\MysteriousKey.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Room.cs" />
+    <Compile Include="Creatures\Monsters\Skeleton.cs" />
+    <Compile Include="Creatures\Monsters\Spider.cs" />
+    <Compile Include="Statistics.cs" />
     <Compile Include="Test.cs" />
-    <Compile Include="Creature.cs"/>
-    <Compile Include="Item.cs" />
-    <Compile Include="IDamageable.cs" />
+    <Compile Include="Creatures\Creature.cs" />
+    <Compile Include="Items\Item.cs" />
+    <Compile Include="Interfaces\IDamageable.cs" />
+    <Compile Include="Creatures\Monsters\Vampire.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -6,24 +6,8 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-
-/* IDEAS:
-
-    Timed event DONE (Fix timer not working now)
-    Save/Load ability
-    Add some way to get the key
-    Scoring system
-    Statistics Class
-    Chest turns into mimic
-    Campfire heals (random room) (one use only) (item hidden in ashes)
-    Mirror room (Exits swapped)
-    Locked door (exit) requires key DONE
-    Boss battle DONE    
-    System sleep DONE
-    Random suffix messages DONE
-    PrintDelay DONE
-    
-*/
+using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 
 namespace DungeonExplorer
 {
@@ -33,23 +17,28 @@ namespace DungeonExplorer
         private Player player;
         private Room bossRoom;
         private Room ruins;
-        public Game() {
+        public Game()
+        {
             Rooms = new List<Room>();
-            player = new Player("Name", 100);
+            player = new Player("Name", 150);
             InitialiseRooms();
             player.CurrentRoom = Rooms[0];
 
         }
 
-        private void PrintDelay(string text, int delay) {
-            foreach (char c in text) {
+        private void PrintDelay(string text, int delay)
+        {
+            foreach (char c in text)
+            {
                 Console.Write(c);
                 Thread.Sleep(delay);
             }
             Console.Write("\n");
         }
 
-        List<string> Suffixes = new List<string> {
+        // These suffixes can be selected at random when items are found within a room:
+        List<string> Suffixes = new List<string>
+        {
             " is neatly placed in the corner.",
             " lies at your feet.",
             "! Could be useful.",
@@ -62,19 +51,20 @@ namespace DungeonExplorer
             " looks as if it was left behind."
         };
 
-        private void InitialiseRooms(){
+        private void InitialiseRooms()
+        {
             // Room names and their descriptions. Each room has an individual, unique description:
-            Room cave = new Room("Cave Mouth", "You make your way down through the uneven ground, with a chill down your spine.");
-            Room hall = new Room("Hall", "The hall is faintly lit, only by candlelight. You picture how lively this place must have been at some point.");
-            Room chamber = new Room("Chamber", "Everything feels so still... as if time itself has paused.");
-            Room mirrors = new Room("Room of Mirrors", "You enter a room filled with mirrors, feeling increasingly disoriented.");
-            Room treasury = new Room("Treasury", "Precious gems, ancient relics all on display. In the centre of the room, an encased sword rests on a pedastal.");
-            Room library = new Room("Library", "You feel a strange sensation upon entering the room. The large bookshelves tower over you.");
-            Room cellar = new Room("Cellar", "A damp, musty smell floods the room. With only the light from the ladder hatch above, you fear you aren't alone down here.");
-            Room walls = new Room("Crushing walls Corridor", "You let out a sigh of relief. That could've been bad!");
-            Room altar = new Room("Altar", "The moonlight illuminates the large stone altar. You feel it calling you...");
-            ruins = new Room("Ruins", "Remains of a place once magnificent lay sprawled across the hard ground. Strangely enough, a wooden door remains completely intact. Where could it lead?");
-            bossRoom = new Room("Hidden Lair", "Add boss here + functionality");
+            Room cave = new Room("a Cave Mouth", "You make your way down through the uneven ground, a horrible chill goes down your spine.");
+            Room hall = new Room("the Great Hall", "The hall is faintly lit by candlelight. You imagine how lively this place must have been in the past.");
+            Room chamber = new Room("a Chamber", "Everything feels so still... as if time itself has paused.");
+            Room mirrors = new Room("the Room of Mirrors", "You enter a room filled with mirrors. You begin to feel very disoriented.");
+            Room treasury = new Room("the Treasury", "Precious gems, ancient relics are everywhere. In the centre of the room, a large chest rests on a pedestal.");
+            Room library = new Room("the Library", "You feel a strange sensation upon entering the room. The large bookshelves tower over you.");
+            Room cellar = new Room("a Cellar", "A damp, musty smell floods the room. The only the light to guide you comes from the ladder hatch above.");
+            Room walls = new Room("the Crushing walls Corridor", "The walls are open. This room is now safe!");
+            Room altar = new Room("an Altar", "The moonlight illuminates the large stone altar. You feel it calling you...");
+            ruins = new Room("a Ruin", "Remains of a place once magnificent lay sprawled across the hard ground. A grand spruce door stands completely intact.\n\n>>> The door requires a key to open, perhaps it is hidden somewhere in the dungeon...\n>>> (Try \"use\" if you find the key!)");
+            bossRoom = new Room("a Hidden Lair", "Add boss here + functionality");
 
             // Add navigation. W = West. S = South. N = North. E = East:
             cave.AddExit("W", ruins);
@@ -111,386 +101,660 @@ namespace DungeonExplorer
             Rooms.Add(ruins);
             Rooms.Add(bossRoom);
 
-            treasury.AddMonster(new Mimic());
+            // Only the Mimic spawns in the treasury room. The Mimic drops the key to the boss room:
+            Mimic mimic = new Mimic(player);
+            treasury.AddMonster(mimic);
+
             bossRoom.AddMonster(new Minotaur());
 
-            // Randomly assign a room to each monster:
-            List<Monster> monsters = new List<Monster> {
+            // Randomly assigns a room to each monster (apart from the mimic and minotaur as they are needed for the key for the boss door and boss room):
+            List<Monster> monsters = new List<Monster>
+            {
                 new Dragon(),
-                new Orc(),
+                new Spider(),
                 new Goblin(),
                 new Vampire(),
                 new Skeleton(),
+                new Hound(),
 
             };
 
             Random random = new Random();
-            foreach (var monster in monsters) {
-                int roomNum = random.Next(Rooms.Count);
-                Rooms[roomNum].AddMonster(monster);
+            foreach (var monster in monsters)
+            {
+                List<Room> availableRooms = Rooms.Where(room => room != treasury && room != bossRoom && room != walls).ToList();
+                int roomNum = random.Next(availableRooms.Count);
+                availableRooms[roomNum].AddMonster(monster);
             }
 
             // These are the weapons and the potions. They all have their own name, description and number for how much damage they deal:
-            Weapon sword = new Weapon("Broadsword", "A plain broadsword", 12);
-            Weapon club = new Weapon("Club", "An old club", 17);
-            Weapon stick = new Weapon("Stick", "Just a stick", 1);
-            Weapon bow = new Weapon("Bow", "A bow", 24);
-            Weapon longsword = new Weapon("Longsword", "A mighty longsword", 25);
+            Weapon sword = new Weapon("Broadsword", "A plain broadsword", 18);
+            Weapon club = new Weapon("Club", "An old club", 20);
+            Weapon stick = new Weapon("Stick", "Just a stick", 10);
+            Weapon bow = new Weapon("Bow", "A sturdy longbow", 24);
+            Weapon longsword = new Weapon("Longsword", "A mighty longsword", 27);
 
-            Potion small = new Potion("Lesser Healing", "Heals 5 HP", 5);
-            Potion medium = new Potion("Medium Healing", "Heals 10 HP", 10);
-            Potion large = new Potion("Greater Healing", "Heals 20 HP", 20);
+            Potion small = new Potion("Lesser Healing", "Heals 25 HP", 25);
+            Potion medium = new Potion("Medium Healing", "Heals 40 HP", 40);
+            Potion large = new Potion("Greater Healing", "Heals 60 HP", 60);
 
-            cave.SetItems(new List<Item> {
+            cave.SetItems(new List<Item>
+            {
                 stick,
                 small,
             });
-            chamber.SetItems(new List<Item> {
+            chamber.SetItems(new List<Item>
+            {
                 club,
             });
-            ruins.SetItems(new List<Item> {
+            ruins.SetItems(new List<Item>
+            {
                 sword,
             });
-            cellar.SetItems(new List<Item> {
+            cellar.SetItems(new List<Item>
+            {
                 bow,
                 medium
             });
-
-            Misc key = new Misc("Mysterious Key", "I wonder what this is used for?");
-            player.AddMisc(key);
-            Weapon fists = new Weapon("Fists", "Your fists", 1);
+            // Player begins with fists. This is so they can attack monsters without collecting a weapon - preventing any possible errors:
+                Weapon fists = new Weapon("Fists", "Your fists", 5);
             player.AddWeapon(fists);
         }
-
-        private void PrintMonsters(List<Monster> monsters) {
-            if (monsters == null || monsters.Count == 0) {
+        // This prints the monsters found in the current room:
+        private void PrintMonsters(List<Monster> monsters)
+        {
+            // When no monsters are in a room, this string is displayed:
+            if (monsters == null || monsters.Count == 0)
+            {
+                Console.WriteLine("The room feels still. You cannot hear any monsters...\n");
                 return;
             }
-            foreach (var monster in monsters) {
-                if (monster != null) {
+            foreach (var monster in monsters)
+            {
+                if (monster != null)
+                {
                     string monsterName = monster.Name;
-                    if(!string.IsNullOrEmpty(monsterName)) {
-                        Console.WriteLine($"The {monsterName} shrieks.");
-                    } else {
-                        Console.WriteLine("DEBUG: MonsterName empty.");
+                    if(!string.IsNullOrEmpty(monsterName))
+                    {
+                        Console.WriteLine(monster.GetMonsterNoise());
+                    }
+                    else
+                    {
+                        Console.WriteLine("ERROR: MonsterName empty.");
                     }
                 }
             }
         }
 
-        private void PrintWeapons(List<Weapon> weapons) {
-            if (weapons == null || weapons.Count == 0) {
+        // This prints the weapons found within the current room. It uses a random suffix at the end to make the game more interesting:
+        private void PrintWeapons(List<Weapon> weapons)
+        {
+            if (weapons == null || weapons.Count == 0)
+            {
                 return;
             }
             Random random = new Random();
 
-            foreach (var weapon in weapons) {
+            foreach (var weapon in weapons)
+            {
                 string randomSuffix = Suffixes[random.Next(Suffixes.Count)];
-                Console.WriteLine($"A {weapon.Name}{randomSuffix}");
+                Console.WriteLine($"> A {weapon.Name}{randomSuffix}");
             }
         }
-        
-        private void PrintPotions(List<Potion> potions) {
-            if (potions == null || potions.Count == 0) {
+
+        // This prints the potions found within the current room:
+        private void PrintPotions(List<Potion> potions)
+        {
+            if (potions == null || potions.Count == 0)
+            {
                 return;
             }
-
-
-            foreach (var potion in potions) {
-                Console.WriteLine($"You can see a potion of {potion.Name}.");
+            foreach (var potion in potions)
+            {
+                Console.WriteLine($"> You can see a potion of {potion.Name}.");
             }
         }
 
-        private void PrintExits(Dictionary<string, Room> exits) {
-            Console.Write("Exits are visible ");
+        // This prints the exits that can be found within the current room:
+        private void PrintExits(Dictionary<string, Room> exits)
+        {
+            Console.Write("\n- Exits are visible ");
 
             var keys = exits.Keys.ToList();
             
-            if (exits.Count == 1) {
-                Console.WriteLine($"to the {keys[0]}");
-            } else if (exits.Count == 2) {
-                Console.WriteLine($"to the {keys[0]} and {keys[1]}");
-            } else {
-                for (var i = 0; i < keys.Count - 1; i++) {
+            if (exits.Count == 1)
+            {
+                Console.WriteLine($"to the {keys[0]}.");
+            }
+            else if (exits.Count == 2)
+            {
+                Console.WriteLine($"to the {keys[0]} and {keys[1]}.");
+            }
+            else
+            {
+                for (var i = 0; i < keys.Count - 1; i++)
+                {
                     Console.Write($"to the {keys[i]}, ");
                 }
-                Console.Write($"and {keys[keys.Count - 1]}\n");
+                Console.Write($"and {keys[keys.Count - 1]}.\n");
             }
         }
         private void HandleWallEvent(Room room)
         {
             // This is a random quicktime event in one of the rooms. If you fail the challenge, the walls close in on the player and they lose:
             Console.Clear();
-            Console.WriteLine("Quick! You must disable the mechanism forcing the walls to close in on you!");
-            Console.WriteLine("Type the alphabet as fast as you can to survive!");
+            Console.Write("Quick! You must disable the mechanism that is forcing the walls to close in on you!\n");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("(Type the alphabet as fast as you can to disable the mechanism)");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("Press ENTER to start quicktime event.");
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("\nPress ENTER to start the quicktime event...");
+            Console.ForegroundColor = ConsoleColor.Gray;
             Console.ReadLine();
             Console.Clear();
-            Console.WriteLine("Quicktime event: Type the alphabet (no spaces, all lowercase)");
+            Console.WriteLine("Type the alphabet (lowercase)");
 
             bool isTimeUp = false;
             DateTime startTime = DateTime.Now;
-            DateTime endTime = startTime.AddSeconds(10); 
+            // The player has 15 seconds to complete the quicktime event:
+            DateTime endTime = startTime.AddSeconds(15);
 
-            while (!isTimeUp && DateTime.Now < endTime)
+            // This is the correct string the user should input to pass the quicktime event:
+            string correctInput = "abcdefghijklmnopqrstuvwxyz";
+            // This will allow the user's player input to be stored whilst they are typing:
+            string userInput = "";
+
+            int timerLineY = Console.CursorTop;
+            int typingLineY = timerLineY + 1;
+
+            // Runs the timer task in a separate task:
+            Task.Run(() =>
             {
-                if (Console.KeyAvailable)
-                    {string quicktimeInput = Console.ReadLine()?.Trim();
+                while (DateTime.Now < endTime && !isTimeUp)
+                {
+                    TimeSpan timeLeft = endTime - DateTime.Now;
 
-                    if (quicktimeInput == "abcdefghijklmnopqrstuvwxyz")
+                    Console.SetCursorPosition(0, timerLineY);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                    Console.SetCursorPosition(0, timerLineY);
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine($"The walls close in: {timeLeft.Seconds} seconds...");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    // Using Thread.Sleep, I can make the timer update every second:
+                    Thread.Sleep(1000);
+
+                    if (timeLeft.TotalSeconds <= 0 || isTimeUp) break;
+                }
+
+            });
+            while (DateTime.Now < endTime && !isTimeUp)
+            {
+                if(Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey(intercept: true).KeyChar;
+
+                    // If the key entered is a letter, it will be added to the player's input on-screen:
+                    if (char.IsLetter(key))
+                    {
+                        userInput += key.ToString().ToLower();
+                        Console.SetCursorPosition(0, typingLineY);
+                        Console.Write(new string(' ', Console.WindowWidth));
+                        Console.SetCursorPosition(0, typingLineY);
+                        Console.Write(userInput);
+                    }
+                    else if (key == 8 && userInput.Length > 0)
+                    {
+                        userInput = userInput.Substring(0, userInput.Length - 1);
+
+                        Console.SetCursorPosition(0, typingLineY);
+                        Console.Write(new string(' ', Console.WindowWidth));
+                        Console.SetCursorPosition (0, typingLineY);
+                        Console.Write(userInput);
+                    }
+                    if (userInput == correctInput)
                     {
                         isTimeUp = true;
-                        Console.Clear();
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        // This string is printed if the player completes the quicktime event:
-                        Console.WriteLine("The walls come to a screeching halt. You did it!");
-                        Thread.Sleep(5000);
-                        Console.ForegroundColor = ConsoleColor.White;
-                        room.EventTriggered = true;
                         break;
-                    }}
+                    }    
+                }
             }
-
-            if (!isTimeUp)
+            // If the player fails the quicktime event:
+            if (!isTimeUp || userInput != correctInput)
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.Clear();
-                // This string is printed if the player fails the quicktime event:
-                Console.WriteLine("The walls crush you...");
-                Console.WriteLine($"\n\n {player.Name} was slain!");
-                Thread.Sleep(5000);
+                PrintDelay($"The walls close in and the brave adventurer {player.Name} is crushed...", 1);
+                Thread.Sleep(3000);
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("Game Over!\n\nPress ENTER to view your statistics");
                 Console.ReadLine();
+                Console.Clear();
+                Console.ForegroundColor= ConsoleColor.White;
+                Console.WriteLine(Statistics.GameOverStats());
                 Environment.Exit(0);
             }
+            // If the player completes the quicktime event:
+            Console.Clear();
+            Console.ForegroundColor= ConsoleColor.Green;
+            PrintDelay("The walls come to a screeching halt. You did it!", 2);
+            Thread.Sleep(3000);
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Gray;
+            room.EventTriggered = true;
         }
-        
-        private void handleMimicEvent(Room room) {
-            Console.WriteLine("Test/Placholder. TO DO!");
+        // Mimic event:
+        private void handleMimicEvent(Room room)
+        {
         }
 
-        private void handleKeyEvent(Room room) {
-            bossRoom.EventTriggered = true;
-            player.SetCurrentRoom(bossRoom);
+        // Logic for the boss room:
+        private void handleKeyEvent(Room room)
+        {
+            room.EventTriggered = true;
             Console.Clear();
             PrintDelay("...", 1000);
             PrintDelay($"{player.Name} presents the mysterious key to the door...", 1);
             PrintDelay("...", 1000);
             PrintDelay("The door swings open, and a strong force pulls you inside...", 1);
             Thread.Sleep(1000);
+
+            // Move player to boss room!
+            player.SetCurrentRoom(bossRoom);
+
+            // Ensure the Bosss Room has only the Minotaur spawn inside of it:
+            bossRoom.Monsters.Clear();
+            bossRoom.AddMonster(new Minotaur());
+
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Red;
+            // Upon entering the boss room:
             PrintDelay("The room shakes as a loud roar erupts from the creature's mouth.", 1);
             Thread.Sleep(1000);
             PrintDelay("You question if this was the right decision...", 1);
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
+            Console.ForegroundColor = (ConsoleColor)ConsoleColor.Gray;
 
             var monsters = player.CurrentRoom.Monsters;
 
-            player.Combat(monsters, player);
+            PrintMonsters(monsters);
 
+            // If the player beats the boss room, this is displayed:
+            player.Combat(monsters, player);
+            if (player.IsAlive())
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You bested the dungeons and defeated the Minotaur.\n\nYou win!\n");
+                Thread.Sleep(2000);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                // Statistics are displayed once the player presses enter as prompted:
+                Console.WriteLine("Press ENTER to view your statistics");
+                Console.ReadLine();
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(Statistics.GameOverStats());
+                
+                Environment.Exit(0);
+            }
         }
 
 
-        public void Start() {
 
+        public void Start()
+        {
             // This text is printed at the beginning of the game. The program asks the player for their name:
-            PrintDelay("Before you embark on the journey of a lifetime, I must know your name.", 1);
+            PrintDelay("Explorer, before you attempt to explore the dungeons, you must tell me your name: ", 1);
             string userName = Console.ReadLine();
+            // Debug.Assert is used to see if the player's name is more than 0 characters. If it is, an error message will be displayed to the player and the game will restart from the beginning again:
+            Test.TestForPlayerNameLength(userName);
+            if (userName.Length == 0)
+            {
+                Start();
+                return;
+            }
             player.Name = userName;
             Console.Clear();
-            PrintDelay($"{userName} began their epic adventure through the deep dungeons...\n\n", 1);
-            PrintDelay($"Commands\n\"attack\" to use your weapon\n\"heal\" to increase your HP\n\"N\", \"S\", \"E\", \"W\" to navigate through rooms\n\"inv\" to view your inventory\n\"pick\" to collect items\n\"use\" to use items", 1);
+            // The player has chosen their name. The game has started and the introduction begins to play:
+            PrintDelay($"I see, your name is {userName}!\nGood luck, {userName}. You will need it...\n", 1);
+            // A list of player commands is displayed to the user to show them their available options:
+            PrintDelay($"============== User Commands: ===============\n\n\"attack\" to use your weapon\n\"heal\" to increase your HP\n\"N\", \"S\", \"E\", \"W\" to navigate through rooms\n\"inv\" to view your inventory\n\"pick\" to collect items\n\"use\" to use items\n\"help\" to display a list of commands\n\n=============================================", 1);
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            PrintDelay("\nType anything and click ENTER to begin.", 1);
+            // The user must press enter to begin the game. This is so the game does not begin automatically and allows the user a moment of time to understand the player commands:
+            PrintDelay("\nPress ENTER to begin...", 1);
             Console.ReadLine();
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Gray;
             Console.Clear();
             
             bool GameInProgress = true;
-            while (GameInProgress) {
-                // wall crushing event check
-                if (player.CurrentRoom.Name == "Crushing walls Corridor" && !player.CurrentRoom.EventTriggered) {
+            while (GameInProgress)
+            {
+                // Checks if the player is in the crushing walls corridor:
+                if (player.CurrentRoom.Name == "the Crushing walls Corridor" && !player.CurrentRoom.EventTriggered)
+                {
+                    // Runs the event if they are:
                     HandleWallEvent(player.CurrentRoom);
                 }
 
-                if (player.CurrentRoom.Name == "Treasury" && !player.CurrentRoom.EventTriggered) {
+                // Mimic event:
+                if (player.CurrentRoom.Name == "the Treasury" && !player.CurrentRoom.EventTriggered)
+                {
                     handleMimicEvent(player.CurrentRoom);
                 }
-
-                if (player.CurrentRoom.Name == "Hidden Lair" && bossRoom.EventTriggered == false) {
+                // If statement to begin the boss event if the player is in the boss room:
+                if (player.CurrentRoom.Name == "a Hidden Lair" && bossRoom.EventTriggered == false)
+                {
                     PrintDelay($"{player.Name} attempts to force the door open, to no avail.", 1);
                     PrintDelay("There must be some other way to get through.", 1);
-                    Console.Clear();
                     Thread.Sleep(2000);
+                    Console.Clear();
                     player.SetCurrentRoom(ruins);
                 }
 
-                // Display current room information:        
-                Console.WriteLine($"{player.Name} ({player.GetHealth()} HP) is in a {player.CurrentRoom.Name}.");
+                // Displays the player name, HP, current room, description, any monsters found within the room, as well as any items:
+                Console.Write($"{player.Name} ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"({player.GetHealth()} HP) ");
+                Console.ResetColor();
+                Console.WriteLine($"is in {player.CurrentRoom.Name}:");
                 Console.WriteLine($"{player.CurrentRoom.Description}");
                 PrintExits(player.CurrentRoom.GetExits());
+                Console.WriteLine();
                 var monsters = player.CurrentRoom.Monsters;
                 var roomWeapons = player.CurrentRoom.GetItems().OfType<Weapon>().ToList();
                 var roomPotions = player.CurrentRoom.GetItems().OfType<Potion>().ToList();
                 PrintMonsters(monsters);
                 PrintWeapons(roomWeapons);
                 PrintPotions(roomPotions);
+                // A string that tells you to enter "help" for a list of user commands. This is to prevent any confusion for the player:
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine("\n(Type \"help\" to view a list of user commands)\n");
+                Console.ResetColor();
 
                 // User input:
                 string input = ExplorerInput();
 
                 // Corresponding action to decision. This for navigating the rooms in directions:
-                if (input == "n" || input == "s" || input == "w" || input == "e") {
+                if (input == "n" || input == "s" || input == "w" || input == "e")
+                {
                     var exits = player.CurrentRoom.GetExits();
-                    if (exits.ContainsKey(input.ToUpper())) {
+                    if (exits.ContainsKey(input.ToUpper()))
+                    {
                         player.CurrentRoom = exits[input.ToUpper()];
+                        Statistics.RoomsExplored();
                         Console.Clear();
                         continue;
                     }
-                } else if (input == "attack") {
-                    if (monsters.Count == 0) {
+                    else
+                    {
+                        // If not exit is found in the inputted direction:
+                        PrintDelay("\nThere is no exit in that direction...", 1);
+                        Thread.Sleep(2000);
+                        Console.Clear();
+                    }
+                }
+                // Attacks monster:
+                else if (input == "attack")
+                {
+                    if (monsters.Count == 0)
+                    {
                      // If there are no monsters in a room, the player is unable to attack, and this string is printed:
                         PrintDelay("You can't attack; there are no monsters here.", 1);
-                    } else {
-                        player.Combat(monsters, player);
+                        Thread.Sleep(2000);
+                        Console.Clear();
                     }
-                } else if (input == "inv") {
+                    else
+                    {
+                        // If the player is alive and the monster is defeated, the room is cleared of monsters:
+                        player.Combat(monsters, player);
+                        if (player.IsAlive())
+                        {
+                            player.CurrentRoom.Monsters.Clear();
+                        }
+                    }
+                }
+                // Displays the inventory:
+                else if (input == "inv")
+                {
+                    Console.Clear();
+                    // The inventory is sorted into separate types of items. These are "weapons", "potions" and "misc":
+                    Console.WriteLine("============== Inventory: ==============\n\nType \"weapons\" to view your weapons.\nType \"potions\" to view your potions.\nType \"misc\" to view miscellaneous items.\n\n========================================");
                     var weapons = player.GetWeapons();
                     var potions = player.GetPotions();
                     var miscs = player.GetMiscs();
-                    Console.WriteLine("Type \"weapons\" to view your weapons, \"potions\" to view your potions, or \"misc\" to view miscellaneous items:");
                     string choice = Console.ReadLine();
-                    if (choice == "weapons") { 
-                        Console.WriteLine("=================================");
-                        Console.WriteLine("Weapons in Inventory: ");
-                        if (weapons.Count == 0) {
+                    if (choice == "weapons")
+                    {
+                        Console.Clear();
+                        Console.WriteLine("======================= Weapons: =======================\n");
+                        // If there are no weapons in the inventory:
+                        if (weapons.Count == 0)
+                        {
                             Console.WriteLine("None.");
-                        } else {
-                            foreach (var weapon in weapons){
-                                Console.WriteLine($"- {weapon.Name}: {weapon.AttackDmg} DMG");
-                            }
-                            Console.Write("\n");
                         }
+                        else
+                        {
+                            // OrderBy LINQ is used here to sort the weapons in the inventory by strongest to weakest:
+                            var sortedWeapons = weapons.OrderByDescending(weapon => weapon.GetAttackDmg()).ToList();
 
-                    } else if (choice == "potions") {
-                        Console.WriteLine("=================================");
-                        Console.WriteLine("Potions in Inventory: ");
-                        if (potions.Count == 0) {
-                            Console.WriteLine("None.");
-                        } else {
-                            foreach (var potion in potions) {
-                                Console.WriteLine($"- {potion.Name}: {potion.HealingFactor} HP");
+                            foreach (var weapon in sortedWeapons)
+                            {
+                                Console.WriteLine($"- {weapon.GetSummary()}");
                             }
-                            Console.Write("\n");
+                            Console.Write("\n========================================================\n\n");
                         }
-                    } else if (choice == "misc") {
-                        Console.WriteLine("=================================");
-                        Console.WriteLine("Items in Inventory: ");
-                        if (miscs.Count == 0) {
+                    }
+                    // Shows potions in the inventory:
+                    else if (choice == "potions")
+                    {
+                        Console.Clear();
+                        Console.WriteLine("======================= Potions: =======================\n");
+                        // If there are no potions in the inventory:
+                        if (potions == null || potions.Count == 0)
+                        {
+                            Console.WriteLine("You currently have no potions in your inventory...\n");
+                            Console.WriteLine("\n========================================================\n");
+                        }
+                        else
+                        {
+                            foreach (var potion in potions)
+                            {
+                                Console.WriteLine($"- {potion.GetSummary()}");
+                            }
+                            Console.Write("\n========================================================\n\n");
+                        }
+                    }
+                    // Shows miscellaneous items in the inventory:
+                    else if (choice == "misc")
+                    {
+                        Console.Clear();
+                        Console.WriteLine("======================= Miscellaneous: =======================\n");
+                        // If there are no miscellaneous items in the inventory:
+                        if (miscs.Count == 0)
+                        {
                             Console.WriteLine("None.");
-                        } else {
-                            foreach (var misc in miscs) {
-                                Console.WriteLine($"- {misc.Name}");
+                        }
+                        else
+                        {
+                            foreach (var misc in miscs)
+                            {
+                             Console.WriteLine($"- {misc.Name}");
                             }
                         }
-                        Console.WriteLine("=================================");
+                        Console.WriteLine("\n==============================================================\n");
                     }
 
-                } else if (input == "pick") {
+                }
+                // Collects items in the room:
+                else if (input == "pick")
+                {
                     var currentItems = player.CurrentRoom.GetItems();
-                    if (currentItems.Count == 0) {
+                    if (currentItems.Count == 0)
+                    {
                         // If there are no items in the room and the player attempts to collect an item, this string will be printed:
-                        PrintDelay("You scramble around the room in attempt to find something, but there's nothing there.", 1);
+                        PrintDelay("\nYou scramble around the room in attempt to find something, but there's nothing there.", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
-                    } else {
+                    }
+                    else
+                    {
                         // This string is printed if the player uses the "pick" command and collects items in a room:
-                        PrintDelay("You gather everything you can see, in hope that it comes in handy.", 1);
+                        PrintDelay("\nYou gather everything you can see, in hope that it comes in handy...", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
-                        foreach (var potion in roomPotions) {
+                        foreach (var potion in roomPotions)
+                        {
                             player.AddPotion(potion);
                             currentItems.Remove(potion);
                         }
-                        foreach (var weapon in roomWeapons) {
+                        foreach (var weapon in roomWeapons)
+                        {
                             player.AddWeapon(weapon);
                             currentItems.Remove(weapon);
                         }
                         player.CurrentRoom.SetItems(currentItems);
                     }
 
-                } else if (input == "heal") {
+                }
+                // Heals the player if they have potions in their inventory:
+                else if (input == "heal")
+                {
                     var currentItems = player.GetInventory();
-                    if (currentItems.OfType<Potion>().Count() == 0) {
+                    if (currentItems.OfType<Potion>().Count() == 0)
+                    {
                         // If the player has no potions and uses the "heal" command, this string will be printed:
-                        PrintDelay("You reach for your potions, only to find you have none.", 1);
+                        PrintDelay("\nYou reach for your potions, only to find you have none.", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
-                    } else {
+                    }
+                    else
+                    {
+                        // The potion is consumed, and the player's health is increased:
                         var potions = player.GetPotions();
-                        foreach (var potion in potions) {
+                        foreach (var potion in potions)
+                        {
                             player.drinkPotion(potion);
                             currentItems.Remove(potion);
                         }
                         player.SetInventory(currentItems);
                         // This string is printed if the player uses the "heal" command with potion/s in their inventory:
-                        PrintDelay("You drink all of your potions. You feel pumped!", 1);
+                        PrintDelay("\nYou drink all of your potions. You feel pumped!", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
                     }
-                } else if (input == "use") {
+                }
+                // Displays help menu:
+                else if (input == "help")
+                    {
+                    GetHelp();
+                    }
+                // Asks the player what item they want to use from their inventory:
+                else if (input == "use")
+                {
                     var miscs = player.GetMiscs();
-                    Console.WriteLine("What item do you want to use?");
-                    Console.WriteLine("=================================");
-                        Console.WriteLine("Items in Inventory: ");
-                        if (miscs.Count == 0) {
-                            Console.WriteLine("None.");
-                        } else {
-                            foreach (var misc in miscs) {
-                                Console.WriteLine($"- {misc.Name}");
-                            }
-                        }
+                        Console.WriteLine("\nWhat item do you want to use?");
                         Console.WriteLine("=================================");
-                        string useInput = Console.ReadLine();
-                        if (useInput == "key" && player.CurrentRoom.Name == "Ruins") {
-                            if (player.GetWeapons().Count == 0) {
-                                Console.ForegroundColor = ConsoleColor.DarkRed;
-                                Console.WriteLine($"{player.Name} feels dreadfully unprepared. They step back and look elsewhere.");
-                                Console.ForegroundColor = ConsoleColor.White;
-                            } else {
-                                handleKeyEvent(player.CurrentRoom);
-                            }
+                        Console.WriteLine("Items in Inventory: ");
+                    if (miscs.Count == 0)
+                    {
+                        Console.WriteLine("None.");
+                    }
+                    else
+                    {
+                        foreach (var misc in miscs)
+                        {
+                            Console.WriteLine($"- {misc.Name}");
                         }
                     }
-
-
-                if (input == "quit") {
+                        Console.WriteLine("=================================");
+                        string useInput = Console.ReadLine();
+                    if (useInput != "key")
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                        Console.WriteLine("\nThat item does not exist in your inventory.");
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        Thread.Sleep(2000);
+                        Console.Clear();
+                    }
+                    if (useInput == "key" && player.CurrentRoom.Name == "a Ruin")
+                    {
+                        if (player.playerHasKey == true)
+                        {
+                            handleKeyEvent(player.CurrentRoom);
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
+                            Console.WriteLine("\nYou do not have that item to use.");
+                            Console.ForegroundColor = ConsoleColor.Gray;
+                            Thread.Sleep(2000);
+                            Console.Clear();
+                        }
+                        if (player.GetWeapons().Count == 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.WriteLine($"{player.Name} feels dreadfully unprepared. They step back and look elsewhere.");
+                            Console.ForegroundColor = ConsoleColor.Gray;
+                        }
+                    }   
+                    if (useInput == "key" && player.CurrentRoom.Name != "a Ruin")
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                        Console.WriteLine("\nYou cannot use a key...");
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        Thread.Sleep(2000);
+                        Console.Clear();
+                    }
+                }
+                // Quits the game:
+                if (input == "quit")
+                {
+                    Console.WriteLine(Statistics.GameOverStats());
                     GameInProgress = false;
                 }
             }
         }
-
+        // This allows the player to see all of the valid user inputs:
+        private void GetHelp()
+        {
+            Console.Clear();
+           Console.WriteLine("============= User Commands: ===============\n\n\"attack\" to use your weapon\n\"heal\" to increase your HP\n\"N\", \"S\", \"E\", \"W\" to navigate through rooms\n\"inv\" to view your inventory\n\"pick\" to collect items\n\"use\" to use items\n\"help\" to display a list of commands\n\n============================================\n", 1);
+        }
         private string ExplorerInput()
         {
             // Below are all of the valid inputs that the player can use throughout the duration of the game:
-            string[] validInputs = {"inv", "pick", "heal", "attack", "n", "s", "e", "w", "quit", "use"};
+            string[] validInputs = {"inv", "pick", "heal", "attack", "n", "s", "e", "w", "quit", "use", "help"};
 
-            while (true) {
+            while (true)
+            {
                 // This string is printed when the game is awaiting user input:
                 Console.WriteLine("\nWhat do you do?");
                 string input = Console.ReadLine()?.ToLower().Trim();
 
-                if (Array.Exists(validInputs, cmd => cmd == input)) {
-                    return input;
+                if (Array.Exists(validInputs, cmd => cmd == input))
+                {
+                return input;
                 }
 
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 // Error-handling to make sure the game continues gracefully if the user enters an invalid input:
-                Console.WriteLine("Invalid command. Try again.");
-                Console.ForegroundColor = ConsoleColor.White;
-
+                Console.WriteLine("\nInvalid command. Try again.");
+                Thread.Sleep(2000);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.Clear();
+                Console.Write($"{player.Name} ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"({player.GetHealth()} HP) ");
+                Console.ResetColor();
+                Console.WriteLine($"is in {player.CurrentRoom.Name}:");
+                Console.WriteLine($"{player.CurrentRoom.Description}");
+                PrintExits(player.CurrentRoom.GetExits());
+                Console.WriteLine();
+                var monsters = player.CurrentRoom.Monsters;
+                var roomWeapons = player.CurrentRoom.GetItems().OfType<Weapon>().ToList();
+                var roomPotions = player.CurrentRoom.GetItems().OfType<Potion>().ToList();
+                PrintMonsters(monsters);
+                PrintWeapons(roomWeapons);
+                PrintPotions(roomPotions);
             }
         }
     }
