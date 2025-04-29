@@ -36,6 +36,7 @@ namespace DungeonExplorer
             Console.Write("\n");
         }
 
+        // These suffixes can be selectted at random when items are found within a room:
         List<string> Suffixes = new List<string>
         {
             " is neatly placed in the corner.",
@@ -106,7 +107,7 @@ namespace DungeonExplorer
 
             bossRoom.AddMonster(new Minotaur());
 
-            // Randomly assign a room to each monster (apart from the mimic and minotaur as they are needed for the key for the boss door and boss room:
+            // Randomly assigns a room to each monster (apart from the mimic and minotaur as they are needed for the key for the boss door and boss room:
             List<Monster> monsters = new List<Monster>
             {
                 new Dragon(),
@@ -162,7 +163,7 @@ namespace DungeonExplorer
         // This prints the monsters found in the current room:
         private void PrintMonsters(List<Monster> monsters)
         {
-            // When no monsters are in a room:
+            // When no monsters are in a room, this string is displayed:
             if (monsters == null || monsters.Count == 0)
             {
                 Console.WriteLine("The room feels still. You cannot hear any monsters...\n");
@@ -265,6 +266,7 @@ namespace DungeonExplorer
             int timerLineY = Console.CursorTop;
             int typingLineY = timerLineY + 1;
 
+            // Runs the timer task in a separate task:
             Task.Run(() =>
             {
                 while (DateTime.Now < endTime && !isTimeUp)
@@ -324,7 +326,7 @@ namespace DungeonExplorer
                 Thread.Sleep(3000);
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("Game Over!\n\nType anything and click ENTER to view your statistics");
+                Console.WriteLine("Game Over!\n\nPress ENTER to view your statistics");
                 Console.ReadLine();
                 Console.Clear();
                 Console.WriteLine(Statistics.GameOverStats());
@@ -382,7 +384,7 @@ namespace DungeonExplorer
                 Console.WriteLine("You bested the dungeons and defeated the Minotaur.\n\nYou win!");
                 Thread.Sleep(2000);
                 // Statistics are displayed once the player presses enter as prompted:
-                Console.WriteLine("Type anything and click ENTER to view your statistics");
+                Console.WriteLine("Press ENTER to view your statistics");
                 Console.ReadLine();
                 Console.Clear();
                 Console.WriteLine(Statistics.GameOverStats());
@@ -412,8 +414,8 @@ namespace DungeonExplorer
             // A list of player commands is displayed to the user to show them their available options:
             PrintDelay($"============== User Commands: ===============\n\n\"attack\" to use your weapon\n\"heal\" to increase your HP\n\"N\", \"S\", \"E\", \"W\" to navigate through rooms\n\"inv\" to view your inventory\n\"pick\" to collect items\n\"use\" to use items\n\"help\" to display a list of commands\n\n=============================================", 1);
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            // The user can type anything, or leave the space empty. They must press enter to begin the game. This is so the game does not begin automatically and allows the user a moment of time to understand the player commands:
-            PrintDelay("\nType anything and click ENTER to begin...", 1);
+            // The user must press enter to begin the game. This is so the game does not begin automatically and allows the user a moment of time to understand the player commands:
+            PrintDelay("\nENTER to begin...", 1);
             Console.ReadLine();
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
@@ -428,10 +430,12 @@ namespace DungeonExplorer
                     HandleWallEvent(player.CurrentRoom);
                 }
 
+                // Mimic event:
                 if (player.CurrentRoom.Name == "the Treasury" && !player.CurrentRoom.EventTriggered)
                 {
                     handleMimicEvent(player.CurrentRoom);
                 }
+                // If statement to begin the boss event if the player is in the boss room:
                 if (player.CurrentRoom.Name == "a Hidden Lair" && bossRoom.EventTriggered == false)
                 {
                     PrintDelay($"{player.Name} attempts to force the door open, to no avail.", 1);
@@ -477,6 +481,7 @@ namespace DungeonExplorer
                     }
                     else
                     {
+                        // If not exit is found in the inputted direction:
                         PrintDelay("\nThere is no exit in that direction...", 1);
                         Thread.Sleep(2000);
                         Console.Clear();
@@ -494,6 +499,7 @@ namespace DungeonExplorer
                     }
                     else
                     {
+                        // If the player is alive and the monster is defeated, the room is cleared of monsters:
                         player.Combat(monsters, player);
                         if (player.IsAlive())
                         {
@@ -505,6 +511,7 @@ namespace DungeonExplorer
                 else if (input == "inv")
                 {
                     Console.Clear();
+                    // The inventory is sorted into separate types of items. These are "weapons", "potions" and "misc":
                     Console.WriteLine("============== Inventory: ==============\n\nType \"weapons\" to view your weapons.\nType \"potions\" to view your potions.\nType \"misc\" to view miscellaneous items.\n\n========================================");
                     var weapons = player.GetWeapons();
                     var potions = player.GetPotions();
@@ -514,6 +521,7 @@ namespace DungeonExplorer
                     {
                         Console.Clear();
                         Console.WriteLine("======================= Weapons: =======================\n");
+                        // If there are no weapons in the inventory:
                         if (weapons.Count == 0)
                         {
                             Console.WriteLine("None.");
@@ -535,6 +543,7 @@ namespace DungeonExplorer
                     {
                         Console.Clear();
                         Console.WriteLine("======================= Potions: =======================\n");
+                        // If there are no potions in the inventory:
                         if (potions == null || potions.Count == 0)
                         {
                             Console.WriteLine("You currently have no potions in your inventory...\n");
@@ -554,6 +563,7 @@ namespace DungeonExplorer
                     {
                         Console.Clear();
                         Console.WriteLine("======================= Miscellaneous: =======================\n");
+                        // If there are no miscellaneous items in the inventory:
                         if (miscs.Count == 0)
                         {
                             Console.WriteLine("None.");
@@ -613,6 +623,7 @@ namespace DungeonExplorer
                     }
                     else
                     {
+                        // The potion is consumed, and the player's health is increased:
                         var potions = player.GetPotions();
                         foreach (var potion in potions)
                         {

@@ -47,6 +47,7 @@ public class Statistics
 		{
 			MonstersCollected++;
 		}
+	// ListSummary, ListNum and ListAverage are all required for the maths that sorts the end-game statistics:
 	private static int ListSummary(List<int> list)
 	{
 		return list.Sum();
@@ -69,18 +70,13 @@ public class Statistics
 		// Overall game statistics are displayed to the user. This includes the damage dealt, taken, amount of attacks, average damage, number of rooms and collected monster souls:
 		if (ListNum(DamageTaken) > 0 && ListNum(DamageDone) > 0)
 		{
-			statistics = ($"Statistics:\n\nYou dealt {ListSummary(DamageDone)} damage.\nYou attacked {ListNum(DamageDone)} times, and your average damage per attack was: {ListAverage(DamageDone)}. \n\n") +
-			($"You took {ListSummary(DamageTaken)} damage.\nYou were attacked {ListNum(DamageTaken)} times, and the average damage to you per attack was: {ListAverage(DamageTaken)}. \n\n") +
-			($"You explored {ExploredRooms} rooms (Including re-entering rooms).\n\n");
-		}
-		else
-		{
-			statistics = ($"Statistics:\n\nYou dealt {ListSummary(DamageDone)} damage.\nYou attacked {ListNum(DamageDone)} times. \n\n") +
-			($"You took {ListSummary(DamageTaken)} damage.\nYou were attacked {ListNum(DamageTaken)} times, and the average damage to you per attack was: {ListAverage(DamageTaken)}. \n\n") +
-            ($"You explored {ExploredRooms} rooms (Including re-entering rooms).\n\n");
+			statistics = ($"Statistics:\n\nDamage Dealt:\nYou dealt {ListSummary(DamageDone)} damage.\nYou attacked {ListNum(DamageDone)} times, and your average damage per attack was: {ListAverage(DamageDone)}. \n\n") +
+			($"Damage Taken:\nYou took {ListSummary(DamageTaken)} damage.\nYou were attacked {ListNum(DamageTaken)} times, and the average damage to you per attack was: {ListAverage(DamageTaken)}. \n\n") +
+			($"Rooms Explored:\nYou explored {ExploredRooms} rooms (Including re-entering rooms).\n\n");
 		}
 		// "Thanks for playing" is shown as it is an end game screen when these statistics are displayed:
-		statistics += ($"You collected {MonstersCollected} souls from slain foes.\n\nThank you for playing!");
+		// If the player does and takes no damage throughout the game's runtime, only the collected souls will be displayed on the statistics screen:
+		statistics += ($"Souls Collected:\nYou collected {MonstersCollected} souls from slain foes.\n\nThank you for playing!");
        
 		return statistics;
 	}
