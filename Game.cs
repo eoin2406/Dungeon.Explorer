@@ -663,6 +663,12 @@ namespace DungeonExplorer
                     }
                         Console.WriteLine("=================================");
                         string useInput = Console.ReadLine();
+                    if (useInput != "key")
+                    {
+                        Console.WriteLine("\nThat item does not exist in your inventory.");
+                        Thread.Sleep(2000);
+                        Console.Clear();
+                    }
                     if (useInput == "key" && player.CurrentRoom.Name == "a Ruin")
                     {
                         if (player.playerHasKey == true)
@@ -681,6 +687,12 @@ namespace DungeonExplorer
                             Console.WriteLine($"{player.Name} feels dreadfully unprepared. They step back and look elsewhere.");
                             Console.ForegroundColor = ConsoleColor.Gray;
                         }
+                    }   
+                    if (useInput == "key" && player.CurrentRoom.Name != "a Ruin")
+                    {
+                        Console.WriteLine("\nYou cannot use a key...");
+                        Thread.Sleep(2000);
+                        Console.Clear();
                     }
                 }
                 // Quits the game:
