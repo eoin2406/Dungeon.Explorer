@@ -36,7 +36,7 @@ namespace DungeonExplorer
             Console.Write("\n");
         }
 
-        // These suffixes can be selectted at random when items are found within a room:
+        // These suffixes can be selected at random when items are found within a room:
         List<string> Suffixes = new List<string>
         {
             " is neatly placed in the corner.",
