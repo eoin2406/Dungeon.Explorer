@@ -21,7 +21,7 @@ namespace DungeonExplorer
             base.Collect();
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             this.PrintDelay("> The Mimic shatters to pieces.\nIt drops an old key, and the brave explorer absorbs its cursed soul...\n\nMaybe this key can be used for the door in the ruins!", 1);
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Gray;
             // The mysterious key to the boss door is dropped upon the mimic's defeat:
 
             if (player != null)

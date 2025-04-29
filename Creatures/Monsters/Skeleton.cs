@@ -19,7 +19,7 @@ namespace DungeonExplorer
             base.Collect();
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             this.PrintDelay("> The Skeleton breaks into pieces.\n Its cursed soul is absorbed by the brave explorer...\n", 1);
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Gray;
             System.Threading.Thread.Sleep(3000);
             Console.Clear();
         }

@@ -228,7 +228,7 @@ namespace DungeonExplorer
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         playerDmg *= 2;
                         Console.WriteLine($"Critical Hit! {player.Name} attacks {monster.Name} for {playerDmg} DMG.");
-                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Gray;
                     }
                     Console.WriteLine($"{player.Name} attacks {monster.Name} for {playerDmg} DMG.");
                     monster.TakeDamage(playerDmg);
@@ -239,13 +239,13 @@ namespace DungeonExplorer
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\n{monster.Name} was defeated!");
-                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Gray;
                         Console.ForegroundColor = ConsoleColor.DarkCyan;
                         if (monster is ICollectable collectableMonster)
                         {
                             collectableMonster.Collect();
                         }
-                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Gray;
                     }
                 }
                 
@@ -258,7 +258,7 @@ namespace DungeonExplorer
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         playerDmg *= 2;
                         Console.WriteLine($"Critical Hit! {player.Name} attacks {monster.Name} for {playerDmg} DMG.");
-                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Gray;
                     }
                     Console.WriteLine($"{player.Name} attacks {monster.Name} for {playerDmg} DMG.");
                     monster.TakeDamage(playerDmg);
@@ -269,7 +269,7 @@ namespace DungeonExplorer
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\n{monster.Name} was defeated!");
-                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Gray;
                         monster.Collect();
                         player.CurrentRoom.delMonster(monster);
                         break;
@@ -286,6 +286,7 @@ namespace DungeonExplorer
                         PrintDelay($"\n{player.Name} was slain by {monster.Name}", 2);
                         Console.ForegroundColor = ConsoleColor.White;
                         Thread.Sleep(2000);
+                        Console.Clear();
                         Console.WriteLine("Game Over!\nType anything and click ENTER to view your statistics");
                         Console.ReadLine();
                         Console.Clear();

@@ -248,7 +248,7 @@ namespace DungeonExplorer
             Console.WriteLine("(Type the alphabet as fast as you can to disable the mechanism)");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write("\nPress ENTER to start the quicktime event...");
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Gray;
             Console.ReadLine();
             Console.Clear();
             Console.WriteLine("Type the alphabet (lowercase)");
@@ -278,7 +278,7 @@ namespace DungeonExplorer
                     Console.SetCursorPosition(0, timerLineY);
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     Console.WriteLine($"The walls close in: {timeLeft.Seconds} seconds...");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Gray;
                     // Using Thread.Sleep, I can make the timer update every second:
                     Thread.Sleep(1000);
 
@@ -338,7 +338,7 @@ namespace DungeonExplorer
             PrintDelay("The walls come to a screeching halt. You did it!", 2);
             Thread.Sleep(3000);
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Gray;
             room.EventTriggered = true;
         }
         // Mimic event:
@@ -371,6 +371,7 @@ namespace DungeonExplorer
             Thread.Sleep(1000);
             PrintDelay("You question if this was the right decision...", 1);
             Thread.Sleep(2000);
+            Console.ForegroundColor = (ConsoleColor)ConsoleColor.Gray;
 
             var monsters = player.CurrentRoom.Monsters;
 
@@ -381,7 +382,7 @@ namespace DungeonExplorer
             if (player.IsAlive())
             {
                 Console.Clear();
-                Console.WriteLine("You bested the dungeons and defeated the Minotaur.\n\nYou win!");
+                Console.WriteLine("You bested the dungeons and defeated the Minotaur.\n\nYou win!\n");
                 Thread.Sleep(2000);
                 // Statistics are displayed once the player presses enter as prompted:
                 Console.WriteLine("Press ENTER to view your statistics");
@@ -415,9 +416,9 @@ namespace DungeonExplorer
             PrintDelay($"============== User Commands: ===============\n\n\"attack\" to use your weapon\n\"heal\" to increase your HP\n\"N\", \"S\", \"E\", \"W\" to navigate through rooms\n\"inv\" to view your inventory\n\"pick\" to collect items\n\"use\" to use items\n\"help\" to display a list of commands\n\n=============================================", 1);
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             // The user must press enter to begin the game. This is so the game does not begin automatically and allows the user a moment of time to understand the player commands:
-            PrintDelay("\nENTER to begin...", 1);
+            PrintDelay("\nPress ENTER to begin...", 1);
             Console.ReadLine();
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Gray;
             Console.Clear();
             
             bool GameInProgress = true;
@@ -445,7 +446,7 @@ namespace DungeonExplorer
                     player.SetCurrentRoom(ruins);
                 }
 
-                // Display player name, HP, current room, any monsters found within the room, as well as any items:
+                // Displays the player name, HP, current room, description, any monsters found within the room, as well as any items:
                 Console.Write($"{player.Name} ");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write($"({player.GetHealth()} HP) ");
@@ -646,7 +647,7 @@ namespace DungeonExplorer
                 else if (input == "use")
                 {
                     var miscs = player.GetMiscs();
-                        Console.WriteLine("What item do you want to use?");
+                        Console.WriteLine("\nWhat item do you want to use?");
                         Console.WriteLine("=================================");
                         Console.WriteLine("Items in Inventory: ");
                     if (miscs.Count == 0)
@@ -668,7 +669,7 @@ namespace DungeonExplorer
                         {
                             Console.ForegroundColor = ConsoleColor.DarkRed;
                             Console.WriteLine($"{player.Name} feels dreadfully unprepared. They step back and look elsewhere.");
-                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.ForegroundColor = ConsoleColor.Gray;
                         }
                         else
                         {
@@ -708,8 +709,24 @@ namespace DungeonExplorer
 
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 // Error-handling to make sure the game continues gracefully if the user enters an invalid input:
-                Console.WriteLine("Invalid command. Try again.");
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\nInvalid command. Try again.");
+                Thread.Sleep(2000);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.Clear();
+                Console.Write($"{player.Name} ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"({player.GetHealth()} HP) ");
+                Console.ResetColor();
+                Console.WriteLine($"is in {player.CurrentRoom.Name}:");
+                Console.WriteLine($"{player.CurrentRoom.Description}");
+                PrintExits(player.CurrentRoom.GetExits());
+                Console.WriteLine();
+                var monsters = player.CurrentRoom.Monsters;
+                var roomWeapons = player.CurrentRoom.GetItems().OfType<Weapon>().ToList();
+                var roomPotions = player.CurrentRoom.GetItems().OfType<Potion>().ToList();
+                PrintMonsters(monsters);
+                PrintWeapons(roomWeapons);
+                PrintPotions(roomPotions);
             }
         }
     }
