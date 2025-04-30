@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DungeonExplorer
@@ -21,7 +22,9 @@ namespace DungeonExplorer
             base.Collect();
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             this.PrintDelay("> The Mimic shatters to pieces.\nIt drops an old key, and the brave explorer absorbs its cursed soul...\n\nMaybe this key can be used for the door in the ruins!", 1);
+            Thread.Sleep(1000);
             Console.ForegroundColor = ConsoleColor.Gray;
+            Console.Clear();
             // The mysterious key to the boss door is dropped upon the mimic's defeat:
 
             if (player != null)

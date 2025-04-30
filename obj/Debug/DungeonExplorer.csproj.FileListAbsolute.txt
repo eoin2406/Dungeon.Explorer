@@ -19,3 +19,10 @@ C:\Users\Student\Documents\Module Dev Containers\Dungeon.Explorer\obj\Debug\Dung
 C:\Users\Student\Documents\Module Dev Containers\Dungeon.Explorer\obj\Debug\DungeonExplorer.csproj.CoreCompileInputs.cache
 C:\Users\Student\Documents\Module Dev Containers\Dungeon.Explorer\obj\Debug\DungeonExplorer.exe
 C:\Users\Student\Documents\Module Dev Containers\Dungeon.Explorer\obj\Debug\DungeonExplorer.pdb
+D:\Eoin\Documents\Github\Dungeon.Explorer\bin\Debug\DungeonExplorer.exe.config
+D:\Eoin\Documents\Github\Dungeon.Explorer\bin\Debug\DungeonExplorer.exe
+D:\Eoin\Documents\Github\Dungeon.Explorer\bin\Debug\DungeonExplorer.pdb
+D:\Eoin\Documents\Github\Dungeon.Explorer\obj\Debug\DungeonExplorer.csproj.AssemblyReference.cache
+D:\Eoin\Documents\Github\Dungeon.Explorer\obj\Debug\DungeonExplorer.csproj.CoreCompileInputs.cache
+D:\Eoin\Documents\Github\Dungeon.Explorer\obj\Debug\DungeonExplorer.exe
+D:\Eoin\Documents\Github\Dungeon.Explorer\obj\Debug\DungeonExplorer.pdb

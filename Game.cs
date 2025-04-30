@@ -20,6 +20,7 @@ namespace DungeonExplorer
         public Game()
         {
             Rooms = new List<Room>();
+            // Player begins with 150 HP:
             player = new Player("Name", 150);
             InitialiseRooms();
             player.CurrentRoom = Rooms[0];
@@ -64,7 +65,7 @@ namespace DungeonExplorer
             Room walls = new Room("the Crushing walls Corridor", "The walls are open. This room is now safe!");
             Room altar = new Room("an Altar", "The moonlight illuminates the large stone altar. You feel it calling you...");
             ruins = new Room("a Ruin", "Remains of a place once magnificent lay sprawled across the hard ground. A grand spruce door stands completely intact.\n\n>>> The door requires a key to open, perhaps it is hidden somewhere in the dungeon...\n>>> (Try \"use\" if you find the key!)");
-            bossRoom = new Room("a Hidden Lair", "Add boss here + functionality");
+            bossRoom = new Room("a Hidden Lair", "The dark lair, where the beastly minotaur roams...");
 
             // Add navigation. W = West. S = South. N = North. E = East:
             cave.AddExit("W", ruins);
